@@ -1,6 +1,7 @@
 module com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
 
 
     opens com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx to javafx.fxml;
