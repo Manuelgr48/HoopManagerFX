@@ -26,6 +26,7 @@ public class DashboardController {
     @FXML
     public void mostrarEquipos(ActionEvent event) {
         System.out.println("Navegando a Equipos a traves de AppShell...");
+        AppShell.loadView(View.EQUIPOS);
     }
 
     @FXML

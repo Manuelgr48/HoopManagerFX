@@ -1,5 +1,6 @@
 package com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller;
 
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,7 +24,6 @@ public class LoginController {
     private Label lblMensaje;
 
     @FXML
-    @FXML
     public void handleLogin(ActionEvent event) {
         String usuario = txtUsuario.getText();
         String password = txtPassword.getText();
@@ -35,6 +35,8 @@ public class LoginController {
         }
 
         if ("admin".equals(usuario) && "1234".equals(password)) {
+            SessionManager.getInstance().iniciarSesion(usuario, "ADMINISTRADOR");
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/dashboard-view.fxml"));
                 Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
