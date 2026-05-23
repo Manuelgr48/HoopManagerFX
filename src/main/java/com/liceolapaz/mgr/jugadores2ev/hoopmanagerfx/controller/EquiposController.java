@@ -48,6 +48,14 @@ public class EquiposController implements Initializable {
         this.colFechaCreacion.setCellValueFactory(new PropertyValueFactory<>("fecha_creacion"));
 
         cargarEquipos();
+        tablaEquipos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                tfNombre.setText(newValue.getNombre());
+                tfCategoria.setText(newValue.getCategoria());
+                tfPresupuesto.setText(String.valueOf(newValue.getPresupuesto()));
+                dpFechaCreacion.setValue(newValue.getFechaCreacion());
+            }
+        });
     }
 
     private void cargarEquipos() {
@@ -113,5 +121,67 @@ public class EquiposController implements Initializable {
         tfCategoria.clear();
         tfPresupuesto.clear();
         dpFechaCreacion.setValue(null);
+    }
+    @FXML
+    private void handleModificar() {
+        Equipo seleccionado = tablaEquipos.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            System.err.println("Por favor, selecciona un equipo de la tabla para modificar.");
+            return;
+        }
+
+        seleccionado.setNombre(tfNombre.getText());
+        seleccionado.setCategoria(tfCategoria.getText());
+        seleccionado.setPresupuesto(Double.parseDouble(tfPresupuesto.getText()));
+        seleccionado.setFechaCreacion(dpFechaCreacion.getValue());
+
+        javafx.concurrent.Task<Boolean> tareaModificar = new javafx.concurrent.Task<>() {
+            @Override
+            protected Boolean call() throws Exception {
+                return equipoDAO.modificar(seleccionado);
+            }
+        };
+
+        tareaModificar.setOnSucceeded(event -> {
+            if (tareaModificar.getValue()) {
+                System.out.println("Equipo modificado con éxito.");
+                limpiarFormulario();
+                cargarEquipos();
+            } else {
+                System.err.println("Error al modificar el equipo en la BD.");
+            }
+        });
+
+        new Thread(tareaModificar).start();
+    }
+
+    @FXML
+    private void handleEliminar() {
+        Equipo seleccionado = tablaEquipos.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            System.err.println("Por favor, selecciona un equipo de la tabla para eliminar.");
+            return;
+        }
+
+        final int idEquipo = seleccionado.getIdEquipo();
+
+        javafx.concurrent.Task<Boolean> tareaEliminar = new javafx.concurrent.Task<>() {
+            @Override
+            protected Boolean call() throws Exception {
+                return equipoDAO.eliminar(idEquipo);
+            }
+        };
+
+        tareaEliminar.setOnSucceeded(event -> {
+            if (tareaEliminar.getValue()) {
+                System.out.println("Equipo eliminado con éxito.");
+                limpiarFormulario();
+                cargarEquipos();
+            } else {
+                System.err.println("Error al eliminar el equipo en la BD.");
+            }
+        });
+
+        new Thread(tareaEliminar).start();
     }
 }

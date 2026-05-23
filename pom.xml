@@ -65,7 +65,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx/com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.HelloApplication
+                                com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx/com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.MainApp
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
