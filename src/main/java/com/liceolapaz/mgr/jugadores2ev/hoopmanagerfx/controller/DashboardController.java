@@ -32,6 +32,7 @@ public class DashboardController {
     @FXML
     public void mostrarJugadores(ActionEvent event) {
         System.out.println("Navegando a Jugadores a traves de AppShell...");
+        AppShell.loadView(View.JUGADORES);
     }
 
     @FXML
