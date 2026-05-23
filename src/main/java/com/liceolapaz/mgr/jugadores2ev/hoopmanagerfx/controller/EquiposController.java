@@ -22,6 +22,13 @@ public class EquiposController implements Initializable {
     @FXML private TableColumn<Equipo, Double> colPresupuesto;
     @FXML private TableColumn<Equipo, String> colFechaCreacion;
 
+    @FXML private javafx.scene.control.TextField tfNombre;
+    @FXML private javafx.scene.control.TextField tfCategoria;
+    @FXML private javafx.scene.control.TextField tfPresupuesto;
+    @FXML private javafx.scene.control.DatePicker dpFechaCreacion;
+    @FXML private javafx.scene.control.Button btnAnadir;
+
+
     private EquipoDAO equipoDAO;
     private ObservableList<Equipo> listaEquipos;
 
@@ -60,5 +67,51 @@ public class EquiposController implements Initializable {
             tareaCarga.getException().printStackTrace();
         });
         new Thread(tareaCarga).start();
+    }
+    @FXML
+    private void handleAnadir() {
+        if (tfNombre.getText().isEmpty() || tfCategoria.getText().isEmpty() ||
+                tfPresupuesto.getText().isEmpty() || dpFechaCreacion.getValue() == null) {
+            System.err.println("Faltan campos por rellenar");
+            return;
+        }
+        Equipo nuevoEquipo = new Equipo(
+                0,
+                tfNombre.getText(),
+                tfCategoria.getText(),
+                Double.parseDouble(tfPresupuesto.getText()),
+                dpFechaCreacion.getValue()
+        );
+
+        javafx.concurrent.Task<Boolean> tareaInsertar = new javafx.concurrent.Task<>() {
+            @Override
+            protected Boolean call() throws Exception {
+                return equipoDAO.insertar(nuevoEquipo);
+            }
+        };
+
+
+        tareaInsertar.setOnSucceeded(event -> {
+            if (tareaInsertar.getValue()) {
+                System.out.println("Equipo insertado con éxito en la BD.");
+                limpiarFormulario();
+                cargarEquipos();
+            } else {
+                System.err.println("Hubo un problema al insertar el equipo.");
+            }
+        });
+
+        tareaInsertar.setOnFailed(event -> {
+            System.err.println("Error de conexión al intentar insertar.");
+            tareaInsertar.getException().printStackTrace();
+        });
+        new Thread(tareaInsertar).start();
+    }
+
+    private void limpiarFormulario() {
+        tfNombre.clear();
+        tfCategoria.clear();
+        tfPresupuesto.clear();
+        dpFechaCreacion.setValue(null);
     }
 }
