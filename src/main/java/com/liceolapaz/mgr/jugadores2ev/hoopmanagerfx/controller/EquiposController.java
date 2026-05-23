@@ -44,7 +44,21 @@ public class EquiposController implements Initializable {
     }
 
     private void cargarEquipos() {
-        listaEquipos.clear();
-        tablaEquipos.setItems(listaEquipos);
+        javafx.concurrent.Task<java.util.List<Equipo>> tareaCarga = new javafx.concurrent.Task<>() {
+            @Override
+            protected java.util.List<Equipo> call() throws Exception {
+                return equipoDAO.obtenerTodos();
+            }
+        };
+        tareaCarga.setOnSucceeded(event -> {
+            listaEquipos.clear();
+            listaEquipos.addAll(tareaCarga.getValue());
+            tablaEquipos.setItems(listaEquipos);
+        });
+        tareaCarga.setOnFailed(event -> {
+            System.err.println("Fallo al cargar los equipos desde la BD.");
+            tareaCarga.getException().printStackTrace();
+        });
+        new Thread(tareaCarga).start();
     }
 }
