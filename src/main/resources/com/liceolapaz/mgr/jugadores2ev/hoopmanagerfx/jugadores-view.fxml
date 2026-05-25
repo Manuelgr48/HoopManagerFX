@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -19,6 +20,8 @@
             <Font name="System Bold" size="24.0" />
         </font>
     </Label>
+
+    <TextField fx:id="tfBuscador" promptText="🔍 Buscar jugador por nombre o apellido..." style="-fx-font-size: 14px; -fx-padding: 8px;" />
 
     <TableView fx:id="tablaJugadores" VBox.vgrow="ALWAYS">
         <columns>

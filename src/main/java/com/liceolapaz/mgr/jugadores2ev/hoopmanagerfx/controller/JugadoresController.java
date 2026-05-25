@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -23,6 +24,7 @@ public class JugadoresController implements Initializable {
     @FXML private TableColumn<Jugador, String> colPosicion;
     @FXML private TableColumn<Jugador, Double> colAltura;
     @FXML private TableColumn<Jugador, Integer> colEquipo;
+    @FXML private TextField tfBuscador;
 
     private JugadorDAO jugadorDAO;
     private ObservableList<Jugador> listaJugadores;
@@ -44,6 +46,29 @@ public class JugadoresController implements Initializable {
         this.colEquipo.setCellValueFactory(new PropertyValueFactory<>("id_equipo"));
 
         cargarJugadores();
+        javafx.collections.transformation.FilteredList<com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Jugador> filteredData =
+                new javafx.collections.transformation.FilteredList<>(listaJugadores, p -> true);
+
+        tfBuscador.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(jugador -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (jugador.getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (jugador.getApellidos().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        javafx.collections.transformation.SortedList<com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Jugador> sortedData =
+                new javafx.collections.transformation.SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(tablaJugadores.comparatorProperty());
+
+        tablaJugadores.setItems(sortedData);
     }
 
     private void cargarJugadores() {

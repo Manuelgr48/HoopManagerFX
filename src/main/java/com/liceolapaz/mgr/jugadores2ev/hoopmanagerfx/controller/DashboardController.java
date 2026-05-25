@@ -15,9 +15,15 @@ public class DashboardController {
 
     @FXML private StackPane contentArea;
 
+
     @FXML
     public void initialize() {
-        mostrarEquipos();
+        mostrarResumen();
+    }
+
+    @FXML
+    private void mostrarResumen() {
+        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/resumen-view.fxml");
     }
 
     @FXML
@@ -37,7 +43,7 @@ public class DashboardController {
 
     @FXML
     private void mostrarEstadisticas() {
-        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/estadisticas-view.fxml");
+        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/estadistica-view.fxml");
     }
 
     private void cargarVista(String fxmlPath) {
