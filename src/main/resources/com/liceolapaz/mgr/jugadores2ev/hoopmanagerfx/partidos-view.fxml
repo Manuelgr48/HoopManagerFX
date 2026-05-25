@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.PartidosController" style="-fx-padding: 20;">
+
+    <Label text="Gestión de Partidos" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <TableView fx:id="tablaPartidos" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="120"/>
+            <TableColumn fx:id="colRival" text="Equipo Rival" prefWidth="150"/>
+            <TableColumn fx:id="colUbicacion" text="Ubicación" prefWidth="150"/>
+            <TableColumn fx:id="colResPropio" text="Res. Propio" prefWidth="100"/>
+            <TableColumn fx:id="colResRival" text="Res. Rival" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <DatePicker fx:id="dpFecha" promptText="Fecha del partido"/>
+        <TextField fx:id="tfRival" promptText="Equipo Rival"/>
+        <TextField fx:id="tfUbicacion" promptText="Ubicación"/>
+        <TextField fx:id="tfResPropio" promptText="Resultado Propio" prefWidth="110"/>
+        <TextField fx:id="tfResRival" promptText="Resultado Rival" prefWidth="110"/>
+    </HBox>
+
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="Añadir Partido" onAction="#handleAnadir" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button text="Limpiar Formulario" onAction="#limpiarFormulario"/>
+    </HBox>
+</VBox>
