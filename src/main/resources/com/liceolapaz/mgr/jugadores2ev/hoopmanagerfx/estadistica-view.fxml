@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.EstadisticaController" style="-fx-padding: 20;">
+
+    <Label text="Gestión de Estadísticas" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <TableView fx:id="tablaEstadisticas" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colIdJugador" text="ID Jugador" prefWidth="100"/>
+            <TableColumn fx:id="colIdPartido" text="ID Partido" prefWidth="100"/>
+            <TableColumn fx:id="colPuntos" text="Puntos" prefWidth="90"/>
+            <TableColumn fx:id="colRebotes" text="Rebotes" prefWidth="90"/>
+            <TableColumn fx:id="colAsistencias" text="Asistencias" prefWidth="90"/>
+            <TableColumn fx:id="colFaltas" text="Faltas" prefWidth="90"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <TextField fx:id="tfIdJugador" promptText="ID Jugador" prefWidth="100"/>
+        <TextField fx:id="tfIdPartido" promptText="ID Partido" prefWidth="100"/>
+        <TextField fx:id="tfPuntos" promptText="Puntos" prefWidth="90"/>
+        <TextField fx:id="tfRebotes" promptText="Rebotes" prefWidth="90"/>
+        <TextField fx:id="tfAsistencias" promptText="Asistencias" prefWidth="90"/>
+        <TextField fx:id="tfFaltas" promptText="Faltas" prefWidth="90"/>
+    </HBox>
+
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="Añadir" onAction="#handleAnadir" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button text="Modificar" onAction="#handleModificar" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <Button text="Eliminar" onAction="#handleEliminar" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+        <Button text="Limpiar" onAction="#limpiarFormulario"/>
+    </HBox>
+</VBox>

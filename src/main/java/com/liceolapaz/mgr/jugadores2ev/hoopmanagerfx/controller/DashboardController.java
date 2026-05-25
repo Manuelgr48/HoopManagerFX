@@ -1,51 +1,66 @@
 package com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller;
 
-import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.AppShell;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.SessionManager;
-import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class DashboardController {
 
-    @FXML
-    private VBox centerContainer;
+    @FXML private StackPane contentArea;
 
     @FXML
     public void initialize() {
-        AppShell.setCenterContainer(centerContainer);
+        mostrarEquipos();
     }
 
     @FXML
-    public void mostrarEquipos(ActionEvent event) {
-        System.out.println("Navegando a Equipos a traves de AppShell...");
-        AppShell.loadView(View.EQUIPOS);
+    private void mostrarEquipos() {
+        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/equipos-view.fxml");
     }
 
     @FXML
-    public void mostrarJugadores(ActionEvent event) {
-        System.out.println("Navegando a Jugadores a traves de AppShell...");
-        AppShell.loadView(View.JUGADORES);
+    private void mostrarJugadores() {
+        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/jugadores-view.fxml");
     }
 
     @FXML
-    public void handleLogout(ActionEvent event) {
+    private void mostrarPartidos() {
+        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/partidos-view.fxml");
+    }
+
+    @FXML
+    private void mostrarEstadisticas() {
+        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/estadisticas-view.fxml");
+    }
+
+    private void cargarVista(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Node view = loader.load();
+            contentArea.getChildren().setAll(view);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Error cargando la vista: " + fxmlPath);
+        }
+    }
+
+    @FXML
+    private void cerrarSesion(ActionEvent event) {
         SessionManager.getInstance().cerrarSesion();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/login-view.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(loader.load(), 600, 400));
-            stage.setTitle("HoopManagerFX - Acceso");
+            stage.setScene(new Scene(loader.load()));
             stage.centerOnScreen();
         } catch (IOException e) {
-            System.err.println("Error al redirigir al login: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
