@@ -17,27 +17,25 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class LoginController {
-
-    @FXML private TextField txtUsuario;
+    @FXML private TextField txtCorreo;
     @FXML private PasswordField txtPassword;
     @FXML private Label lblMensaje;
-
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     @FXML
     public void handleLogin(ActionEvent event) {
-        String usuarioInput = txtUsuario.getText();
+        String correoInput = txtCorreo.getText().trim();
         String passwordInput = txtPassword.getText();
 
-        if (usuarioInput.isEmpty() || passwordInput.isEmpty()) {
+        if (correoInput.isEmpty() || passwordInput.isEmpty()) {
             mostrarError("Por favor, rellena todos los campos.");
             return;
         }
 
-        Usuario usuario = usuarioDAO.autenticarUsuario(usuarioInput, passwordInput);
+        Usuario usuario = usuarioDAO.autenticarUsuario(correoInput, passwordInput);
 
         if (usuario != null) {
-            SessionManager.getInstance().iniciarSesion(usuario.getUsername(), usuario.getRol(), usuario.getIdEquipo());
+            SessionManager.getInstance().iniciarSesion(usuario.getCorreo(), usuario.getRol(), usuario.getIdEquipo());
 
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/dashboard-view.fxml"));

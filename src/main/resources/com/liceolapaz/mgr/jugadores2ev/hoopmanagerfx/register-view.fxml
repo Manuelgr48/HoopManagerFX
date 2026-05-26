@@ -27,8 +27,11 @@
         </VBox.margin>
     </Label>
 
-    <TextField fx:id="txtUsername" maxWidth="250.0" promptText="Nombre de usuario" />
+    <TextField fx:id="txtNombre" maxWidth="250.0" promptText="Nombre" />
+    <TextField fx:id="txtApellidos" maxWidth="250.0" promptText="Apellidos" />
+    <TextField fx:id="txtCorreo" maxWidth="250.0" promptText="Correo electrónico" />
     <PasswordField fx:id="txtPassword" maxWidth="250.0" promptText="Contraseña" />
+    <PasswordField fx:id="txtConfirmPassword" maxWidth="250.0" promptText="Confirmar contraseña" />
 
     <Button mnemonicParsing="false" onAction="#onRegisterClick" prefHeight="35.0" prefWidth="250.0"
             style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"

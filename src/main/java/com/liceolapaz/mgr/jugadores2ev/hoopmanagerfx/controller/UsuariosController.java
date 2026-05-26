@@ -12,7 +12,7 @@ public class UsuariosController {
 
     @FXML private TableView<Usuario> tablaUsuarios;
     @FXML private TableColumn<Usuario, Integer> colIdUsuario;
-    @FXML private TableColumn<Usuario, String> colUsername;
+    @FXML private TableColumn<Usuario, String> colCorreo;
     @FXML private TableColumn<Usuario, String> colRol;
     @FXML private TableColumn<Usuario, Integer> colIdEquipo;
 
@@ -28,7 +28,7 @@ public class UsuariosController {
         listaUsuarios = FXCollections.observableArrayList();
 
         colIdUsuario.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
-        colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
+        colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
         colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
         colIdEquipo.setCellValueFactory(new PropertyValueFactory<>("idEquipo"));
 

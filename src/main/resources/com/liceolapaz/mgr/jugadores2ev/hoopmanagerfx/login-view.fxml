@@ -30,7 +30,7 @@
         </VBox.margin>
     </Label>
 
-    <TextField fx:id="txtUsuario" maxWidth="250.0" promptText="Nombre de usuario" />
+    <TextField fx:id="txtCorreo" maxWidth="250.0" promptText="Correo electrónico" />
     <PasswordField fx:id="txtPassword" maxWidth="250.0" promptText="Contraseña" />
 
     <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="35.0" prefWidth="250.0"
