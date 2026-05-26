@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -14,11 +15,17 @@ import java.io.IOException;
 public class DashboardController {
 
     @FXML private StackPane contentArea;
-
+    @FXML private Button btnUsuarios;
 
     @FXML
     public void initialize() {
         mostrarResumen();
+
+        String rol = SessionManager.getInstance().getRol();
+        if (!"ADMIN".equals(rol)) {
+            btnUsuarios.setVisible(false);
+            btnUsuarios.setManaged(false);
+        }
     }
 
     @FXML
@@ -44,6 +51,12 @@ public class DashboardController {
     @FXML
     private void mostrarEstadisticas() {
         cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/estadistica-view.fxml");
+    }
+
+    // Nuevo método para cargar la vista de usuarios
+    @FXML
+    private void mostrarUsuarios() {
+        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/usuarios-view.fxml");
     }
 
     private void cargarVista(String fxmlPath) {

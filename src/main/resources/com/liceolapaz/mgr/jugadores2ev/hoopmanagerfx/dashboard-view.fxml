@@ -16,10 +16,14 @@
             <Label text="HoopManager" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
             <Separator style="-fx-background-color: white;"/>
 
+            <Button text="🏠 Inicio" onAction="#mostrarResumen" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
+
             <Button text="🏀 Equipos" onAction="#mostrarEquipos" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
             <Button text="⛹️ Jugadores" onAction="#mostrarJugadores" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
             <Button text="📅 Partidos" onAction="#mostrarPartidos" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
             <Button text="📊 Estadísticas" onAction="#mostrarEstadisticas" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
+
+            <Button fx:id="btnUsuarios" text="👥 Gestión Usuarios" onAction="#mostrarUsuarios" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: #f1c40f; -fx-border-color: #f1c40f; -fx-border-radius: 5; -fx-font-size: 14px; -fx-font-weight: bold;"/>
 
             <Region VBox.vgrow="ALWAYS" />
             <Button text="Cerrar Sesión" onAction="#cerrarSesion" maxWidth="Infinity" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;"/>

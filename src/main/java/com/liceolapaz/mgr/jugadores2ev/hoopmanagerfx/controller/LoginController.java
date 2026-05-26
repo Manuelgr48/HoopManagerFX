@@ -41,9 +41,19 @@ public class LoginController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/dashboard-view.fxml"));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setScene(new Scene(loader.load(), 900, 600));
+
+                stage.setScene(new Scene(loader.load()));
                 stage.setTitle("HoopManagerFX - Panel Principal");
-                stage.centerOnScreen();
+
+                stage.setResizable(true);
+                stage.setMaximized(true);
+
+                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                stage.setX(screenBounds.getMinX());
+                stage.setY(screenBounds.getMinY());
+                stage.setWidth(screenBounds.getWidth());
+                stage.setHeight(screenBounds.getHeight());
+
             } catch (IOException e) {
                 mostrarError("Error al cargar la interfaz principal.");
                 e.printStackTrace();
@@ -52,25 +62,19 @@ public class LoginController {
             mostrarError("Usuario o contraseña incorrectos.");
         }
     }
+
     @FXML
     public void abrirRegistro(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/dashboard-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/register-view.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-            stage.setScene(new Scene(loader.load()));
-            stage.setTitle("HoopManagerFX - Panel Principal");
-            stage.setResizable(true);
-
-            stage.setMaximized(true);
-            javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-            stage.setX(screenBounds.getMinX());
-            stage.setY(screenBounds.getMinY());
-            stage.setWidth(screenBounds.getWidth());
-            stage.setHeight(screenBounds.getHeight());
+            double width = stage.getScene().getWidth();
+            double height = stage.getScene().getHeight();
+            stage.setScene(new Scene(loader.load(), width, height));
+            stage.setTitle("HoopManagerFX - Registro");
 
         } catch (IOException e) {
-            mostrarError("Error al cargar la interfaz principal.");
+            mostrarError("Error al abrir la ventana de registro.");
             e.printStackTrace();
         }
     }
