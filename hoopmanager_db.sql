@@ -80,3 +80,9 @@ INSERT INTO jugadores (nombre, apellidos, dorsal, posicion, altura, id_equipo) V
                                                                                    ('Alejandro', 'Gómez', 7, 'Base', 1.85, 1),
                                                                                    ('David', 'Rodríguez', 15, 'Pívot', 2.05, 1),
                                                                                    ('Hugo', 'López', 23, 'Alero', 1.96, 2);
+
+
+-- Añado la columna id_equipo a los usuarios para saber a qué equipo pertenecen o entrenan
+ALTER TABLE usuarios ADD COLUMN id_equipo INT NULL;
+ALTER TABLE usuarios ADD CONSTRAINT fk_usuario_equipo
+    FOREIGN KEY (id_equipo) REFERENCES equipos(id_equipo) ON DELETE SET NULL ON UPDATE CASCADE;

@@ -26,6 +26,14 @@ public class SessionManager {
         this.rol = null;
         System.out.println("Sesión cerrada globalmente.");
     }
+    private Integer idEquipo;
+    public void iniciarSesion(String usuario, String rol, Integer idEquipo) {
+        this.usuarioLogueado = usuario;
+        this.rol = rol;
+        this.idEquipo = idEquipo;
+    }
+
+    public Integer getIdEquipo() { return idEquipo; }
 
     public String getUsuarioLogueado() { return usuarioLogueado; }
     public String getRol() { return rol; }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="20.0"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.RegisterController">
+    <padding>
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+    </padding>
+
+    <Label text="Registro" textFill="#2ecc71">
+        <font>
+            <Font name="System Bold" size="32.0" />
+        </font>
+    </Label>
+
+    <Label text="Crea tu cuenta de jugador" textFill="#7f8c8d">
+        <VBox.margin>
+            <Insets bottom="10.0" top="-15.0" />
+        </VBox.margin>
+    </Label>
+
+    <TextField fx:id="txtUsername" maxWidth="250.0" promptText="Nombre de usuario" />
+    <PasswordField fx:id="txtPassword" maxWidth="250.0" promptText="Contraseña" />
+
+    <Button mnemonicParsing="false" onAction="#onRegisterClick" prefHeight="35.0" prefWidth="250.0"
+            style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"
+            text="CREAR CUENTA" />
+
+    <Button mnemonicParsing="false" onAction="#volverAlLogin" prefHeight="35.0" prefWidth="250.0"
+            style="-fx-background-color: transparent; -fx-text-fill: #7f8c8d; -fx-underline: true; -fx-cursor: hand;"
+            text="Volver al inicio de sesión" />
+
+    <Label fx:id="lblMensaje" />
+</VBox>

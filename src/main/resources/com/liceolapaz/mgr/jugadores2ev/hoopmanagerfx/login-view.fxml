@@ -36,6 +36,9 @@
     <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="35.0" prefWidth="250.0"
             style="-fx-background-color: #d35400; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"
             text="INICIAR SESIÓN" />
+    <Button mnemonicParsing="false" onAction="#abrirRegistro" prefHeight="35.0" prefWidth="250.0"
+            style="-fx-background-color: transparent; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-cursor: hand; -fx-underline: true;"
+            text="¿No tienes cuenta? Regístrate" />
 
     <Label fx:id="lblMensaje" />
 </VBox>

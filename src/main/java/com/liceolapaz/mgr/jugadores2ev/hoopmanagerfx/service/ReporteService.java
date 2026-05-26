@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class ReporteService {
 
     public void generarInformeJugadores(String rutaDestino) throws Exception {
-        InputStream reportStream = getClass().getResourceAsStream("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/reportes/jugadores.jrxml");
+        InputStream reportStream = getClass().getResourceAsStream("/reportes/jugadores.jrxml");
         if (reportStream == null) {
             throw new Exception("No se encontró el archivo de diseño del reporte (jugadores.jrxml)");
         }

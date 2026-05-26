@@ -20,18 +20,18 @@
     </title>
     <columnHeader>
         <band height="30">
-            <staticText><reportElement x="0" y="0" width="100" height="20" uuid="111"/><textElement isBold="true"/><text><![CDATA[DORSAL]]></text></staticText>
-            <staticText><reportElement x="100" y="0" width="150" height="20" uuid="222"/><textElement isBold="true"/><text><![CDATA[NOMBRE]]></text></staticText>
-            <staticText><reportElement x="250" y="0" width="150" height="20" uuid="333"/><textElement isBold="true"/><text><![CDATA[APELLIDOS]]></text></staticText>
-            <staticText><reportElement x="400" y="0" width="155" height="20" uuid="444"/><textElement isBold="true"/><text><![CDATA[POSICIÓN]]></text></staticText>
+            <staticText><reportElement x="0" y="0" width="100" height="20" uuid="11111111-1111-1111-1111-111111111111"/><textElement><font isBold="true"/></textElement><text><![CDATA[DORSAL]]></text></staticText>
+            <staticText><reportElement x="100" y="0" width="150" height="20" uuid="22222222-2222-2222-2222-222222222222"/><textElement><font isBold="true"/></textElement><text><![CDATA[NOMBRE]]></text></staticText>
+            <staticText><reportElement x="250" y="0" width="150" height="20" uuid="33333333-3333-3333-3333-333333333333"/><textElement><font isBold="true"/></textElement><text><![CDATA[APELLIDOS]]></text></staticText>
+            <staticText><reportElement x="400" y="0" width="155" height="20" uuid="44444444-4444-4444-4444-444444444444"/><textElement><font isBold="true"/></textElement><text><![CDATA[POSICIÓN]]></text></staticText>
         </band>
     </columnHeader>
     <detail>
         <band height="20">
-            <textField><reportElement x="0" y="0" width="100" height="20" uuid="555"/><textFieldExpression><![CDATA[$F{dorsal}]]></textFieldExpression></textField>
-            <textField><reportElement x="100" y="0" width="150" height="20" uuid="666"/><textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression></textField>
-            <textField><reportElement x="250" y="0" width="150" height="20" uuid="777"/><textFieldExpression><![CDATA[$F{apellidos}]]></textFieldExpression></textField>
-            <textField><reportElement x="400" y="0" width="155" height="20" uuid="888"/><textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression></textField>
+            <textField><reportElement x="0" y="0" width="100" height="20" uuid="55555555-5555-5555-5555-555555555555"/><textFieldExpression><![CDATA[$F{dorsal}]]></textFieldExpression></textField>
+            <textField><reportElement x="100" y="0" width="150" height="20" uuid="66666666-6666-6666-6666-666666666666"/><textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression></textField>
+            <textField><reportElement x="250" y="0" width="150" height="20" uuid="77777777-7777-7777-7777-777777777777"/><textFieldExpression><![CDATA[$F{apellidos}]]></textFieldExpression></textField>
+            <textField><reportElement x="400" y="0" width="155" height="20" uuid="88888888-8888-8888-8888-888888888888"/><textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression></textField>
         </band>
     </detail>
 </jasperReport>
