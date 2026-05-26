@@ -44,9 +44,9 @@
             <version>9.5.0</version>
         </dependency>
         <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-            <version>5.5.13.3</version>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>6.20.6</version>
         </dependency>
     </dependencies>
 
