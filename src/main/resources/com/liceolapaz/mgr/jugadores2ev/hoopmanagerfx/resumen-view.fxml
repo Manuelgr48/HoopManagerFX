@@ -4,12 +4,12 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.control.Button?>
 <VBox alignment="CENTER" spacing="20.0" style="-fx-padding: 30; -fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.ResumenController">
 
     <Label text="Rendimiento del Equipo" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
     <Label text="Análisis de Puntos Anotados vs Recibidos" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
-
+    <Button text="📄 Descargar Informe Completo (PDF)" onAction="#handleExportarPDF" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 10 20 10 20;"/>
     <BarChart fx:id="graficoPartidos" VBox.vgrow="ALWAYS" animated="false">
         <xAxis>
             <CategoryAxis label="Rival" />
