@@ -13,29 +13,32 @@ public class DatabaseConnection {
     }
 
     public static Connection getConnection() {
-        if (connection == null) {
-            try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("database.properties")) {
-                Properties prop = new Properties();
+        try {
+            if (connection == null || connection.isClosed()) {
 
-                if (input == null) {
-                    System.err.println("Error: No se ha encontrado el archivo database.properties");
-                    return null;
+                try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("config.properties")) {
+                    Properties prop = new Properties();
+
+                    if (input == null) {
+                        System.err.println("Error: No se ha encontrado el archivo config.properties");
+                        return null;
+                    }
+
+                    prop.load(input);
+                    String url = prop.getProperty("db.url");
+                    String user = prop.getProperty("db.user");
+                    String pass = prop.getProperty("db.password");
+
+                    connection = DriverManager.getConnection(url, user, pass);
+                    System.out.println("¡Conexión a la base de datos HoopManager establecida con éxito!");
                 }
-
-                prop.load(input);
-                String url = prop.getProperty("db.url");
-                String user = prop.getProperty("db.user");
-                String pass = prop.getProperty("db.password");
-
-                connection = DriverManager.getConnection(url, user, pass);
-                System.out.println("¡Conexión a la base de datos HoopManager establecida con éxito!");
-
-            } catch (SQLException e) {
-                System.err.println("Error de SQL al conectar con la base de datos: " + e.getMessage());
-            } catch (Exception e) {
-                System.err.println("Error al cargar la configuración de la BBDD: " + e.getMessage());
             }
+        } catch (SQLException e) {
+            System.err.println("Error de SQL al conectar con la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error al cargar la configuración de la BBDD: " + e.getMessage());
         }
+
         return connection;
     }
 

@@ -41,12 +41,11 @@ public class EquiposController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         listaEquipos = FXCollections.observableArrayList();
 
-        this.colId.setCellValueFactory(new PropertyValueFactory<>("id_equipo"));
+        this.colId.setCellValueFactory(new PropertyValueFactory<>("idEquipo"));
         this.colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         this.colCategoria.setCellValueFactory(new PropertyValueFactory<>("categoria"));
         this.colPresupuesto.setCellValueFactory(new PropertyValueFactory<>("presupuesto"));
-        this.colFechaCreacion.setCellValueFactory(new PropertyValueFactory<>("fecha_creacion"));
-
+        this.colFechaCreacion.setCellValueFactory(new PropertyValueFactory<>("fechaCreacion"));
         cargarEquipos();
         tablaEquipos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {

@@ -28,7 +28,8 @@ public class EstadisticaDAOImpl implements EstadisticaDAO {
                         rs.getInt("puntos"),
                         rs.getInt("rebotes"),
                         rs.getInt("asistencias"),
-                        rs.getInt("faltas_cometidas")
+                        // AQUI SE HA CAMBIADO A "faltas"
+                        rs.getInt("faltas")
                 );
                 estadisticas.add(e);
             }
@@ -38,7 +39,7 @@ public class EstadisticaDAOImpl implements EstadisticaDAO {
 
     @Override
     public void addEstadistica(Estadistica e) throws Exception {
-        String sql = "INSERT INTO estadisticas (id_jugador, id_partido, puntos, rebotes, asistencias, faltas_cometidas) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO estadisticas (id_jugador, id_partido, puntos, rebotes, asistencias, faltas) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -54,7 +55,7 @@ public class EstadisticaDAOImpl implements EstadisticaDAO {
 
     @Override
     public void updateEstadistica(Estadistica e) throws Exception {
-        String sql = "UPDATE estadisticas SET id_jugador = ?, id_partido = ?, puntos = ?, rebotes = ?, asistencias = ?, faltas_cometidas = ? WHERE id_estadistica = ?";
+        String sql = "UPDATE estadisticas SET id_jugador = ?, id_partido = ?, puntos = ?, rebotes = ?, asistencias = ?, faltas = ? WHERE id_estadistica = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
