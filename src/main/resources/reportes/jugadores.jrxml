@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InformeJugadores" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="12345678-1234-1234-1234-123456789012">
+    <queryString>
+        <![CDATA[SELECT * FROM jugadores]]>
+    </queryString>
+    <field name="nombre" class="java.lang.String"/>
+    <field name="apellidos" class="java.lang.String"/>
+    <field name="dorsal" class="java.lang.Integer"/>
+    <field name="posicion" class="java.lang.String"/>
+    <title>
+        <band height="50">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="30" uuid="87654321-4321-4321-4321-210987654321"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Informe Oficial de Jugadores - HoopManager]]></text>
+            </staticText>
+        </band>
+    </title>
+    <columnHeader>
+        <band height="30">
+            <staticText><reportElement x="0" y="0" width="100" height="20" uuid="111"/><textElement isBold="true"/><text><![CDATA[DORSAL]]></text></staticText>
+            <staticText><reportElement x="100" y="0" width="150" height="20" uuid="222"/><textElement isBold="true"/><text><![CDATA[NOMBRE]]></text></staticText>
+            <staticText><reportElement x="250" y="0" width="150" height="20" uuid="333"/><textElement isBold="true"/><text><![CDATA[APELLIDOS]]></text></staticText>
+            <staticText><reportElement x="400" y="0" width="155" height="20" uuid="444"/><textElement isBold="true"/><text><![CDATA[POSICIÓN]]></text></staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="20">
+            <textField><reportElement x="0" y="0" width="100" height="20" uuid="555"/><textFieldExpression><![CDATA[$F{dorsal}]]></textFieldExpression></textField>
+            <textField><reportElement x="100" y="0" width="150" height="20" uuid="666"/><textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression></textField>
+            <textField><reportElement x="250" y="0" width="150" height="20" uuid="777"/><textFieldExpression><![CDATA[$F{apellidos}]]></textFieldExpression></textField>
+            <textField><reportElement x="400" y="0" width="155" height="20" uuid="888"/><textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression></textField>
+        </band>
+    </detail>
+</jasperReport>
