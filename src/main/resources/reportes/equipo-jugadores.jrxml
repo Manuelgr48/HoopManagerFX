@@ -101,4 +101,24 @@
 
             <textField>
                 <reportElement x="70" y="2" width="130" height="20" uuid="22222222-aaaa-bbbb-cccc-222222222222"/>
-                <textFieldExpression><![CDATA[$F{nombre}]]></textField
+                <textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="200" y="2" width="150" height="20" uuid="33333333-aaaa-bbbb-cccc-333333333333"/>
+                <textFieldExpression><![CDATA[$F{apellidos}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="350" y="2" width="120" height="20" uuid="44444444-aaaa-bbbb-cccc-444444444444"/>
+                <textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#0.00">
+                <reportElement x="470" y="2" width="85" height="20" uuid="55555555-aaaa-bbbb-cccc-555555555555"/>
+                <textFieldExpression><![CDATA[$F{altura}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+</jasperReport>
