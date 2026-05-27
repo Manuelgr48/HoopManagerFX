@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 
@@ -37,19 +38,34 @@ public class RendimientoController {
     }
 
     private void cargarEquipos() {
-        cbEquipo.setItems(FXCollections.observableArrayList(equipoDAO.obtenerTodos()));
+        try {
+            cbEquipo.setItems(FXCollections.observableArrayList(equipoDAO.obtenerTodos()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudieron cargar los equipos.");
+        }
     }
 
     @FXML
     private void cargarRendimientoGeneral() {
-        cbEquipo.getSelectionModel().clearSelection();
-        List<Partido> partidos = partidoService.obtenerTodosLosPartidos();
-        pintarGrafico(partidos, "Rendimiento general");
+        try {
+            cbEquipo.getSelectionModel().clearSelection();
+            List<Partido> partidos = partidoService.obtenerTodosLosPartidos();
+            pintarGrafico(partidos, "Rendimiento general");
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo cargar el rendimiento general.");
+        }
     }
 
     private void cargarRendimientoEquipo(Equipo equipo) {
-        List<Partido> partidos = partidoService.obtenerPartidosPorEquipo(equipo.getIdEquipo());
-        pintarGrafico(partidos, "Rendimiento de " + equipo.getNombre());
+        try {
+            List<Partido> partidos = partidoService.obtenerPartidosPorEquipo(equipo.getIdEquipo());
+            pintarGrafico(partidos, "Rendimiento de " + equipo.getNombre());
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo cargar el rendimiento del equipo.");
+        }
     }
 
     private void pintarGrafico(List<Partido> partidos, String titulo) {
@@ -85,5 +101,13 @@ public class RendimientoController {
                         + " | Derrotas: " + derrotas
                         + " | Empates: " + empates
         );
+    }
+
+    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }

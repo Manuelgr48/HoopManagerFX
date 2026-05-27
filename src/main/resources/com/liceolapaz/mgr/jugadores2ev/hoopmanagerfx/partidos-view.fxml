@@ -3,7 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="15" alignment="CENTER"
+<VBox spacing="15"
+      alignment="CENTER"
       xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.PartidosController"
@@ -11,9 +12,13 @@
 
     <Label text="Gestion de Partidos" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
+    <TextField fx:id="tfBuscador"
+               promptText="Buscar por equipo, rival o ubicacion"
+               prefWidth="360"/>
+
     <TableView fx:id="tablaPartidos" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="colEquipo" text="Equipo" prefWidth="150"/>
+            <TableColumn fx:id="colEquipo" text="Equipo" prefWidth="160"/>
             <TableColumn fx:id="colFecha" text="Fecha" prefWidth="120"/>
             <TableColumn fx:id="colRival" text="Equipo Rival" prefWidth="150"/>
             <TableColumn fx:id="colUbicacion" text="Ubicacion" prefWidth="150"/>
@@ -23,32 +28,19 @@
     </TableView>
 
     <HBox fx:id="formularioPartido" spacing="10" alignment="CENTER">
-        <TextField fx:id="tfEquipo" promptText="Equipo propio"/>
+        <ComboBox fx:id="cbEquipo" promptText="Equipo" prefWidth="180"/>
         <DatePicker fx:id="dpFecha" promptText="Fecha del partido"/>
-        <TextField fx:id="tfRival" promptText="Equipo Rival"/>
+        <TextField fx:id="tfRival" promptText="Equipo rival"/>
         <TextField fx:id="tfUbicacion" promptText="Ubicacion"/>
-        <TextField fx:id="tfResPropio" promptText="Resultado Propio" prefWidth="120"/>
-        <TextField fx:id="tfResRival" promptText="Resultado Rival" prefWidth="120"/>
+        <TextField fx:id="tfResPropio" promptText="Res. propio" prefWidth="90"/>
+        <TextField fx:id="tfResRival" promptText="Res. rival" prefWidth="90"/>
     </HBox>
 
-    <HBox fx:id="botonesCrud" spacing="15" alignment="CENTER">
-        <Button fx:id="btnAnadir"
-                text="Anadir Partido"
-                onAction="#handleAnadir"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-
-        <Button fx:id="btnModificar"
-                text="Modificar Partido"
-                onAction="#handleModificar"
-                style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-
-        <Button fx:id="btnEliminar"
-                text="Eliminar Partido"
-                onAction="#handleEliminar"
-                style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
-
-        <Button text="Limpiar Formulario"
-                onAction="#limpiarFormulario"/>
+    <HBox fx:id="botonesCrud" spacing="10" alignment="CENTER">
+        <Button text="Anadir" onAction="#handleAnadir" style="-fx-background-color: #2ecc71; -fx-text-fill: white;"/>
+        <Button text="Modificar" onAction="#handleModificar" style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+        <Button text="Eliminar" onAction="#handleEliminar" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+        <Button text="Limpiar" onAction="#limpiarFormulario"/>
     </HBox>
 
 </VBox>

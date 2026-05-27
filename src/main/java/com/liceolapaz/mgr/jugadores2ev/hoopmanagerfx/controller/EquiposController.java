@@ -16,10 +16,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class EquiposController implements Initializable {
 
+    @FXML private TextField tfBuscador;
     @FXML private TableView<Equipo> tablaEquipos;
     @FXML private TableColumn<Equipo, Integer> colId;
     @FXML private TableColumn<Equipo, String> colNombre;
@@ -51,6 +53,8 @@ public class EquiposController implements Initializable {
 
         tablaEquipos.setItems(listaEquipos);
         btnAccederInformacion.setDisable(true);
+
+        tfBuscador.textProperty().addListener((obs, oldText, newText) -> buscarEquipos());
 
         tablaEquipos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, equipo) -> {
             btnAccederInformacion.setDisable(equipo == null);
@@ -86,6 +90,19 @@ public class EquiposController implements Initializable {
     }
 
     @FXML
+    private void buscarEquipos() {
+        String filtro = tfBuscador.getText();
+
+        listaEquipos.clear();
+
+        if (filtro == null || filtro.trim().isEmpty()) {
+            listaEquipos.addAll(equipoDAO.obtenerTodos());
+        } else {
+            listaEquipos.addAll(equipoDAO.buscarPorNombreOCategoria(filtro.trim()));
+        }
+    }
+
+    @FXML
     private void accederInformacionEquipo() {
         Equipo equipo = tablaEquipos.getSelectionModel().getSelectedItem();
 
@@ -101,6 +118,12 @@ public class EquiposController implements Initializable {
             Node vista = loader.load();
 
             StackPane contentArea = (StackPane) tablaEquipos.getScene().lookup("#contentArea");
+
+            if (contentArea == null) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se encontro la zona principal de la aplicacion.");
+                return;
+            }
+
             contentArea.getChildren().setAll(vista);
 
         } catch (Exception e) {
@@ -124,7 +147,7 @@ public class EquiposController implements Initializable {
         if (equipoDAO.insertar(equipo)) {
             mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Equipo anadido correctamente.");
             limpiarFormulario();
-            cargarEquipos();
+            buscarEquipos();
         } else {
             mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo anadir el equipo.");
         }
@@ -141,6 +164,10 @@ public class EquiposController implements Initializable {
 
         if (!validarFormulario()) return;
 
+        if (!confirmar("Confirmar modificacion", "Seguro que quieres modificar este equipo?")) {
+            return;
+        }
+
         equipo.setNombre(tfNombre.getText().trim());
         equipo.setCategoria(tfCategoria.getText().trim());
         equipo.setPresupuesto(Double.parseDouble(tfPresupuesto.getText().trim()));
@@ -149,7 +176,7 @@ public class EquiposController implements Initializable {
         if (equipoDAO.modificar(equipo)) {
             mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Equipo modificado correctamente.");
             limpiarFormulario();
-            cargarEquipos();
+            buscarEquipos();
         } else {
             mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo modificar el equipo.");
         }
@@ -164,12 +191,16 @@ public class EquiposController implements Initializable {
             return;
         }
 
+        if (!confirmar("Confirmar eliminacion", "Seguro que quieres eliminar este equipo?")) {
+            return;
+        }
+
         if (equipoDAO.eliminar(equipo.getIdEquipo())) {
             mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Equipo eliminado correctamente.");
             limpiarFormulario();
-            cargarEquipos();
+            buscarEquipos();
         } else {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el equipo.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el equipo. Puede tener datos relacionados.");
         }
     }
 
@@ -180,6 +211,7 @@ public class EquiposController implements Initializable {
         tfCategoria.clear();
         tfPresupuesto.clear();
         dpFechaCreacion.setValue(null);
+        btnAccederInformacion.setDisable(true);
     }
 
     private boolean validarFormulario() {
@@ -192,13 +224,28 @@ public class EquiposController implements Initializable {
         }
 
         try {
-            Double.parseDouble(tfPresupuesto.getText().trim());
+            double presupuesto = Double.parseDouble(tfPresupuesto.getText().trim());
+
+            if (presupuesto < 0) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Formato incorrecto", "El presupuesto no puede ser negativo.");
+                return false;
+            }
         } catch (NumberFormatException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Formato incorrecto", "El presupuesto debe ser numerico.");
             return false;
         }
 
         return true;
+    }
+
+    private boolean confirmar(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+
+        Optional<ButtonType> resultado = alerta.showAndWait();
+        return resultado.isPresent() && resultado.get() == ButtonType.OK;
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {

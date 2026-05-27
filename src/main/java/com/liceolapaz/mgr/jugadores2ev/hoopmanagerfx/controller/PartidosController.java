@@ -1,6 +1,7 @@
 package com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller;
 
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.EquipoDAO;
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Equipo;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Partido;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.service.PartidoService;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.SessionManager;
@@ -21,6 +22,7 @@ import java.util.ResourceBundle;
 
 public class PartidosController implements Initializable {
 
+    @FXML private TextField tfBuscador;
     @FXML private TableView<Partido> tablaPartidos;
     @FXML private TableColumn<Partido, String> colEquipo;
     @FXML private TableColumn<Partido, LocalDate> colFecha;
@@ -29,7 +31,7 @@ public class PartidosController implements Initializable {
     @FXML private TableColumn<Partido, Integer> colResPropio;
     @FXML private TableColumn<Partido, Integer> colResRival;
 
-    @FXML private TextField tfEquipo;
+    @FXML private ComboBox<Equipo> cbEquipo;
     @FXML private DatePicker dpFecha;
     @FXML private TextField tfRival;
     @FXML private TextField tfUbicacion;
@@ -38,13 +40,11 @@ public class PartidosController implements Initializable {
 
     @FXML private HBox formularioPartido;
     @FXML private HBox botonesCrud;
-    @FXML private Button btnAnadir;
-    @FXML private Button btnModificar;
-    @FXML private Button btnEliminar;
 
     private final EquipoDAO equipoDAO = new EquipoDAO();
     private final PartidoService partidoService = new PartidoService();
     private final ObservableList<Partido> listaPartidos = FXCollections.observableArrayList();
+    private final ObservableList<Equipo> listaEquipos = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -56,6 +56,9 @@ public class PartidosController implements Initializable {
         colResRival.setCellValueFactory(new PropertyValueFactory<>("resultadoRival"));
 
         tablaPartidos.setItems(listaPartidos);
+        cbEquipo.setItems(listaEquipos);
+
+        tfBuscador.textProperty().addListener((obs, oldText, newText) -> buscarPartidos());
 
         tablaPartidos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, partido) -> {
             if (partido != null) {
@@ -64,6 +67,7 @@ public class PartidosController implements Initializable {
         });
 
         configurarPermisos();
+        cargarEquiposCombo();
         cargarPartidos();
     }
 
@@ -74,6 +78,11 @@ public class PartidosController implements Initializable {
         formularioPartido.setManaged(puedeModificar);
         botonesCrud.setVisible(puedeModificar);
         botonesCrud.setManaged(puedeModificar);
+    }
+
+    private void cargarEquiposCombo() {
+        listaEquipos.clear();
+        listaEquipos.addAll(equipoDAO.obtenerTodos());
     }
 
     private void cargarPartidos() {
@@ -87,8 +96,27 @@ public class PartidosController implements Initializable {
         task.setOnSucceeded(event -> listaPartidos.setAll(task.getValue()));
 
         task.setOnFailed(event -> {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudieron cargar los partidos.");
             task.getException().printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudieron cargar los partidos.");
+        });
+
+        new Thread(task).start();
+    }
+
+    @FXML
+    private void buscarPartidos() {
+        Task<List<Partido>> task = new Task<>() {
+            @Override
+            protected List<Partido> call() throws Exception {
+                return partidoService.buscarPartidos(tfBuscador.getText());
+            }
+        };
+
+        task.setOnSucceeded(event -> listaPartidos.setAll(task.getValue()));
+
+        task.setOnFailed(event -> {
+            task.getException().printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo buscar partidos.");
         });
 
         new Thread(task).start();
@@ -112,11 +140,14 @@ public class PartidosController implements Initializable {
 
         task.setOnSucceeded(event -> {
             mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Partido anadido correctamente.");
-            cargarPartidos();
+            buscarPartidos();
             limpiarFormulario();
         });
 
-        task.setOnFailed(event -> mostrarAlerta(Alert.AlertType.ERROR, "Error", task.getException().getMessage()));
+        task.setOnFailed(event -> {
+            task.getException().printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", task.getException().getMessage());
+        });
 
         new Thread(task).start();
     }
@@ -134,6 +165,10 @@ public class PartidosController implements Initializable {
             return;
         }
 
+        if (!confirmar("Confirmar modificacion", "Seguro que quieres modificar este partido?")) {
+            return;
+        }
+
         Partido partido = crearPartidoDesdeFormulario();
         partido.setIdPartido(seleccionado.getIdPartido());
 
@@ -147,11 +182,14 @@ public class PartidosController implements Initializable {
 
         task.setOnSucceeded(event -> {
             mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Partido modificado correctamente.");
-            cargarPartidos();
+            buscarPartidos();
             limpiarFormulario();
         });
 
-        task.setOnFailed(event -> mostrarAlerta(Alert.AlertType.ERROR, "Error", task.getException().getMessage()));
+        task.setOnFailed(event -> {
+            task.getException().printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", task.getException().getMessage());
+        });
 
         new Thread(task).start();
     }
@@ -165,37 +203,37 @@ public class PartidosController implements Initializable {
             return;
         }
 
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar eliminacion");
-        confirmacion.setHeaderText("Seguro que quieres eliminar este partido?");
-        Optional<ButtonType> resultado = confirmacion.showAndWait();
-
-        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            Task<Void> task = new Task<>() {
-                @Override
-                protected Void call() throws Exception {
-                    partidoService.eliminarPartido(seleccionado.getIdPartido());
-                    return null;
-                }
-            };
-
-            task.setOnSucceeded(event -> {
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Partido eliminado correctamente.");
-                cargarPartidos();
-                limpiarFormulario();
-            });
-
-            task.setOnFailed(event -> mostrarAlerta(Alert.AlertType.ERROR, "Error", task.getException().getMessage()));
-
-            new Thread(task).start();
+        if (!confirmar("Confirmar eliminacion", "Seguro que quieres eliminar este partido?")) {
+            return;
         }
+
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                partidoService.eliminarPartido(seleccionado.getIdPartido());
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Partido eliminado correctamente.");
+            buscarPartidos();
+            limpiarFormulario();
+        });
+
+        task.setOnFailed(event -> {
+            task.getException().printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", task.getException().getMessage());
+        });
+
+        new Thread(task).start();
     }
 
     private Partido crearPartidoDesdeFormulario() {
-        Integer idEquipo = obtenerIdEquipoDesdeTexto();
+        Equipo equipo = cbEquipo.getValue();
 
         return new Partido(
-                idEquipo,
+                equipo.getIdEquipo(),
                 dpFecha.getValue(),
                 tfRival.getText().trim(),
                 tfUbicacion.getText().trim(),
@@ -205,7 +243,7 @@ public class PartidosController implements Initializable {
     }
 
     private void rellenarFormulario(Partido partido) {
-        tfEquipo.setText(partido.getNombreEquipo().equals("Sin equipo") ? "" : partido.getNombreEquipo());
+        cbEquipo.setValue(buscarEquipoPorId(partido.getIdEquipo()));
         dpFecha.setValue(partido.getFecha());
         tfRival.setText(partido.getEquipoRival());
         tfUbicacion.setText(partido.getUbicacion());
@@ -213,10 +251,24 @@ public class PartidosController implements Initializable {
         tfResRival.setText(String.valueOf(partido.getResultadoRival()));
     }
 
+    private Equipo buscarEquipoPorId(Integer idEquipo) {
+        if (idEquipo == null) {
+            return null;
+        }
+
+        for (Equipo equipo : listaEquipos) {
+            if (equipo.getIdEquipo() == idEquipo) {
+                return equipo;
+            }
+        }
+
+        return null;
+    }
+
     @FXML
     private void limpiarFormulario() {
         tablaPartidos.getSelectionModel().clearSelection();
-        tfEquipo.clear();
+        cbEquipo.setValue(null);
         dpFecha.setValue(null);
         tfRival.clear();
         tfUbicacion.clear();
@@ -225,7 +277,7 @@ public class PartidosController implements Initializable {
     }
 
     private boolean validarFormulario() {
-        if (tfEquipo.getText().trim().isEmpty()
+        if (cbEquipo.getValue() == null
                 || dpFecha.getValue() == null
                 || tfRival.getText().trim().isEmpty()
                 || tfUbicacion.getText().trim().isEmpty()
@@ -236,8 +288,13 @@ public class PartidosController implements Initializable {
         }
 
         try {
-            Integer.parseInt(tfResPropio.getText().trim());
-            Integer.parseInt(tfResRival.getText().trim());
+            int resPropio = Integer.parseInt(tfResPropio.getText().trim());
+            int resRival = Integer.parseInt(tfResRival.getText().trim());
+
+            if (resPropio < 0 || resRival < 0) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Formato incorrecto", "Los resultados no pueden ser negativos.");
+                return false;
+            }
         } catch (NumberFormatException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Formato incorrecto", "Los resultados deben ser numeros enteros.");
             return false;
@@ -246,16 +303,14 @@ public class PartidosController implements Initializable {
         return true;
     }
 
-    private Integer obtenerIdEquipoDesdeTexto() {
-        String nombreEquipo = tfEquipo.getText().trim();
+    private boolean confirmar(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
 
-        Integer idEquipo = equipoDAO.obtenerIdPorNombre(nombreEquipo);
-
-        if (idEquipo == null) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Equipo no encontrado", "El equipo '" + nombreEquipo + "' no existe.");
-        }
-
-        return idEquipo;
+        Optional<ButtonType> resultado = alerta.showAndWait();
+        return resultado.isPresent() && resultado.get() == ButtonType.OK;
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
