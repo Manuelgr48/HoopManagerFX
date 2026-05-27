@@ -27,9 +27,15 @@ public class Usuario {
     public String getCorreo() { return correo; }
     public String getPassword() { return password; }
     public String getRol() { return rol; }
-    public void setRol(String rol) { this.rol = rol; }
     public Integer getIdEquipo() { return idEquipo; }
-    public void setIdEquipo(Integer idEquipo) { this.idEquipo = idEquipo; }
+
+    public String getNombreComplepleto() {
+        return nombre + " " + apellidos;
+    }
+
+    public String getNombreCompleto() {
+        return nombre + " " + apellidos;
+    }
 
     public String getNombreEquipo() {
         return (nombreEquipo != null && !nombreEquipo.isEmpty()) ? nombreEquipo : "Sin asignar";

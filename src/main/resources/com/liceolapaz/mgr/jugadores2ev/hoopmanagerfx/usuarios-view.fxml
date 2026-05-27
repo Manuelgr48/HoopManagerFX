@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
 
 <VBox spacing="15.0" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.UsuariosController">
 
-    <Label text="Gestión de Usuarios (Panel de Administrador)" textFill="#2c3e50">
+    <Label text="Gestion de Usuarios" textFill="#2c3e50">
         <font>
             <Font name="System Bold" size="24.0" />
         </font>
@@ -18,38 +15,43 @@
     <TableView fx:id="tablaUsuarios" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="colIdUsuario" prefWidth="50.0" text="ID" />
-            <TableColumn fx:id="colCorreo" prefWidth="150.0" text="Correo Electrónico" />
+            <TableColumn fx:id="colNombre" prefWidth="120.0" text="Nombre" />
+            <TableColumn fx:id="colApellidos" prefWidth="150.0" text="Apellidos" />
+            <TableColumn fx:id="colCorreo" prefWidth="200.0" text="Correo" />
             <TableColumn fx:id="colRol" prefWidth="120.0" text="Rol" />
-            <TableColumn fx:id="colNombreEquipo" prefWidth="150.0" text="Equipo Asignado" />.
+            <TableColumn fx:id="colNombreEquipo" prefWidth="150.0" text="Equipo Asignado" />
         </columns>
         <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
         </columnResizePolicy>
     </TableView>
 
-    <HBox spacing="15.0" alignment="CENTER_LEFT" style="-fx-background-color: #ecf0f1; -fx-padding: 15; -fx-border-radius: 5; -fx-background-radius: 5;">
-        <VBox spacing="5.0">
-            <Label text="Cambiar Rol:" />
-            <ComboBox fx:id="cbRol" prefWidth="150.0">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="JUGADOR" />
-                        <String fx:value="ENTRENADOR" />
-                        <String fx:value="ADMIN" />
-                    </FXCollections>
-                </items>
-            </ComboBox>
-        </VBox>
+    <GridPane hgap="10" vgap="10" style="-fx-background-color: #ecf0f1; -fx-padding: 15; -fx-background-radius: 5;">
+        <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <TextField fx:id="txtNombre" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-        <VBox spacing="5.0">
-            <Label text="Asignar Equipo (Nombre):" />.
-            <TextField fx:id="txtNombreEquipo" promptText="Nombre del equipo" prefWidth="150.0" />.
-        </VBox>
+        <Label text="Apellidos:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+        <TextField fx:id="txtApellidos" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
-        <Region HBox.hgrow="ALWAYS" />
+        <Label text="Correo:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextField fx:id="txtCorreo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-        <Button text="💾 Guardar Cambios" onAction="#actualizarUsuario" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" />
-        <Button text="🗑️ Eliminar Usuario" onAction="#eliminarUsuario" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Label text="Contrasena:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+        <PasswordField fx:id="txtPassword" promptText="Vacia para no cambiar" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+
+        <Label text="Rol:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <ComboBox fx:id="cbRol" prefWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+        <Label text="Equipo:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+        <TextField fx:id="txtNombreEquipo" promptText="Nombre del equipo" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+    </GridPane>
+
+    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <Button text="Crear Usuario" onAction="#crearUsuario" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Button text="Guardar Cambios" onAction="#actualizarUsuario" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Button text="Eliminar Usuario" onAction="#eliminarUsuario" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Button text="Limpiar" onAction="#limpiarFormulario" />
     </HBox>
+
     <Label fx:id="lblMensaje" textFill="green" />
 </VBox>

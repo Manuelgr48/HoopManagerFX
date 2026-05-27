@@ -88,4 +88,20 @@ public class JugadorDAO {
             return pstmt.executeUpdate() > 0;
         } catch (Exception e) { e.printStackTrace(); return false; }
     }
+    public Integer obtenerIdPorNombre(String textoBusqueda) {
+        String sql = "SELECT id_jugador FROM jugadores WHERE CONCAT(nombre, ' ', apellidos) = ? OR nombre = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, textoBusqueda);
+            pstmt.setString(2, textoBusqueda);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_jugador");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -86,3 +86,5 @@ INSERT INTO jugadores (nombre, apellidos, dorsal, posicion, altura, id_equipo) V
 ALTER TABLE usuarios ADD COLUMN id_equipo INT NULL;
 ALTER TABLE usuarios ADD CONSTRAINT fk_usuario_equipo
     FOREIGN KEY (id_equipo) REFERENCES equipos(id_equipo) ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE estadisticas ADD COLUMN faltas_cometidas INT DEFAULT 0;

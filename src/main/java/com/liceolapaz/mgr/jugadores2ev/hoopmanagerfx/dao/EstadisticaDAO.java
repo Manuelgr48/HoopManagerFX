@@ -4,6 +4,14 @@ import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Estadistica;
 import java.util.List;
 
 public interface EstadisticaDAO {
+    List<Estadistica> obtenerTodas();
+
+    boolean insertar(Estadistica estadistica);
+
+    boolean actualizar(Estadistica estadistica);
+
+    boolean eliminar(int id);
+
     void addEstadistica(Estadistica estadistica) throws Exception;
     void updateEstadistica(Estadistica estadistica) throws Exception;
     void deleteEstadistica(int id) throws Exception;
