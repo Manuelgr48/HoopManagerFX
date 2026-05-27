@@ -6,8 +6,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -15,16 +15,33 @@ import java.io.IOException;
 public class DashboardController {
 
     @FXML private StackPane contentArea;
+
+    @FXML private Button btnJugadores;
+    @FXML private Button btnMiEquipo;
     @FXML private Button btnUsuarios;
 
     @FXML
     public void initialize() {
+        configurarMenuPorRol();
         mostrarResumen();
+    }
 
-        String rol = SessionManager.getInstance().getRol();
-        if (!"ADMIN".equals(rol)) {
+    private void configurarMenuPorRol() {
+        SessionManager sesion = SessionManager.getInstance();
+
+        if (!sesion.esAdmin()) {
             btnUsuarios.setVisible(false);
             btnUsuarios.setManaged(false);
+        }
+
+        if (!sesion.esEntrenador()) {
+            btnMiEquipo.setVisible(false);
+            btnMiEquipo.setManaged(false);
+        }
+
+        if (sesion.esEntrenador()) {
+            btnJugadores.setVisible(false);
+            btnJugadores.setManaged(false);
         }
     }
 
@@ -40,6 +57,11 @@ public class DashboardController {
 
     @FXML
     private void mostrarJugadores() {
+        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/jugadores-view.fxml");
+    }
+
+    @FXML
+    private void mostrarMiEquipo() {
         cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/jugadores-view.fxml");
     }
 
@@ -72,9 +94,11 @@ public class DashboardController {
     @FXML
     private void cerrarSesion(ActionEvent event) {
         SessionManager.getInstance().cerrarSesion();
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/login-view.fxml"));
             Parent root = loader.load();
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
             stage.setTitle("HoopManagerFX - Login");
