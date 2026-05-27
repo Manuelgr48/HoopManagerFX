@@ -14,10 +14,8 @@ public class JugadorDAO {
 
     public List<Jugador> obtenerTodos() {
         List<Jugador> jugadores = new ArrayList<>();
-
         String sql = "SELECT j.*, e.nombre AS nombre_equipo " +
-                "FROM jugadores j " +
-                "LEFT JOIN equipos e ON j.id_equipo = e.id_equipo " +
+                "FROM jugadores j LEFT JOIN equipos e ON j.id_equipo = e.id_equipo " +
                 "ORDER BY e.nombre, j.apellidos, j.nombre";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -27,7 +25,6 @@ public class JugadorDAO {
             while (rs.next()) {
                 jugadores.add(mapearJugador(rs));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -37,12 +34,9 @@ public class JugadorDAO {
 
     public List<Jugador> obtenerPorEquipo(int idEquipo) {
         List<Jugador> jugadores = new ArrayList<>();
-
         String sql = "SELECT j.*, e.nombre AS nombre_equipo " +
-                "FROM jugadores j " +
-                "LEFT JOIN equipos e ON j.id_equipo = e.id_equipo " +
-                "WHERE j.id_equipo = ? " +
-                "ORDER BY j.apellidos, j.nombre";
+                "FROM jugadores j LEFT JOIN equipos e ON j.id_equipo = e.id_equipo " +
+                "WHERE j.id_equipo = ? ORDER BY j.apellidos, j.nombre";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -54,12 +48,71 @@ public class JugadorDAO {
                     jugadores.add(mapearJugador(rs));
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return jugadores;
+    }
+
+    public List<Jugador> buscar(String filtro) {
+        List<Jugador> jugadores = new ArrayList<>();
+        String sql = "SELECT j.*, e.nombre AS nombre_equipo " +
+                "FROM jugadores j LEFT JOIN equipos e ON j.id_equipo = e.id_equipo " +
+                "WHERE LOWER(j.nombre) LIKE ? OR LOWER(j.apellidos) LIKE ? OR LOWER(e.nombre) LIKE ? " +
+                "ORDER BY e.nombre, j.apellidos, j.nombre";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            String patron = "%" + filtro.toLowerCase() + "%";
+            pstmt.setString(1, patron);
+            pstmt.setString(2, patron);
+            pstmt.setString(3, patron);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    jugadores.add(mapearJugador(rs));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return jugadores;
+    }
+
+    public boolean existeDorsalEnEquipo(Integer idEquipo, int dorsal, Integer idJugadorIgnorado) {
+        String sql = "SELECT COUNT(*) FROM jugadores " +
+                "WHERE id_equipo <=> ? AND dorsal = ? AND (? IS NULL OR id_jugador <> ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            if (idEquipo != null) {
+                pstmt.setInt(1, idEquipo);
+            } else {
+                pstmt.setNull(1, java.sql.Types.INTEGER);
+            }
+
+            pstmt.setInt(2, dorsal);
+
+            if (idJugadorIgnorado != null) {
+                pstmt.setInt(3, idJugadorIgnorado);
+                pstmt.setInt(4, idJugadorIgnorado);
+            } else {
+                pstmt.setNull(3, java.sql.Types.INTEGER);
+                pstmt.setNull(4, java.sql.Types.INTEGER);
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public boolean insertar(Jugador jugador) {
@@ -68,20 +121,8 @@ public class JugadorDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, jugador.getNombre());
-            pstmt.setString(2, jugador.getApellidos());
-            pstmt.setInt(3, jugador.getDorsal());
-            pstmt.setString(4, jugador.getPosicion());
-            pstmt.setDouble(5, jugador.getAltura());
-
-            if (jugador.getIdEquipo() != null) {
-                pstmt.setInt(6, jugador.getIdEquipo());
-            } else {
-                pstmt.setNull(6, java.sql.Types.INTEGER);
-            }
-
+            rellenarStatementJugador(pstmt, jugador);
             return pstmt.executeUpdate() > 0;
-
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -94,22 +135,10 @@ public class JugadorDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, jugador.getNombre());
-            pstmt.setString(2, jugador.getApellidos());
-            pstmt.setInt(3, jugador.getDorsal());
-            pstmt.setString(4, jugador.getPosicion());
-            pstmt.setDouble(5, jugador.getAltura());
-
-            if (jugador.getIdEquipo() != null) {
-                pstmt.setInt(6, jugador.getIdEquipo());
-            } else {
-                pstmt.setNull(6, java.sql.Types.INTEGER);
-            }
-
+            rellenarStatementJugador(pstmt, jugador);
             pstmt.setInt(7, jugador.getIdJugador());
 
             return pstmt.executeUpdate() > 0;
-
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -124,7 +153,6 @@ public class JugadorDAO {
 
             pstmt.setInt(1, id);
             return pstmt.executeUpdate() > 0;
-
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -145,12 +173,25 @@ public class JugadorDAO {
                     return rs.getInt("id_jugador");
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    private void rellenarStatementJugador(PreparedStatement pstmt, Jugador jugador) throws Exception {
+        pstmt.setString(1, jugador.getNombre());
+        pstmt.setString(2, jugador.getApellidos());
+        pstmt.setInt(3, jugador.getDorsal());
+        pstmt.setString(4, jugador.getPosicion());
+        pstmt.setDouble(5, jugador.getAltura());
+
+        if (jugador.getIdEquipo() != null) {
+            pstmt.setInt(6, jugador.getIdEquipo());
+        } else {
+            pstmt.setNull(6, java.sql.Types.INTEGER);
+        }
     }
 
     private Jugador mapearJugador(ResultSet rs) throws Exception {

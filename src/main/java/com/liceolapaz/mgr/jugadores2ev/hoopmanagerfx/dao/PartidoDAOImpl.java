@@ -11,39 +11,36 @@ public class PartidoDAOImpl implements PartidoDAO {
 
     @Override
     public List<Partido> getAllPartidos() throws Exception {
-        List<Partido> partidos = new ArrayList<>();
-
         String sql = "SELECT p.*, e.nombre AS nombre_equipo " +
-                "FROM partidos p " +
-                "LEFT JOIN equipos e ON p.id_equipo = e.id_equipo " +
+                "FROM partidos p LEFT JOIN equipos e ON p.id_equipo = e.id_equipo " +
                 "ORDER BY p.fecha DESC";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                partidos.add(mapearPartido(rs));
-            }
-        }
-
-        return partidos;
+        return ejecutarListado(sql, null);
     }
 
     @Override
     public List<Partido> getPartidosPorEquipo(int idEquipo) throws Exception {
+        String sql = "SELECT p.*, e.nombre AS nombre_equipo " +
+                "FROM partidos p LEFT JOIN equipos e ON p.id_equipo = e.id_equipo " +
+                "WHERE p.id_equipo = ? ORDER BY p.fecha DESC";
+        return ejecutarListado(sql, idEquipo);
+    }
+
+    @Override
+    public List<Partido> buscar(String filtro) throws Exception {
         List<Partido> partidos = new ArrayList<>();
 
         String sql = "SELECT p.*, e.nombre AS nombre_equipo " +
-                "FROM partidos p " +
-                "LEFT JOIN equipos e ON p.id_equipo = e.id_equipo " +
-                "WHERE p.id_equipo = ? " +
+                "FROM partidos p LEFT JOIN equipos e ON p.id_equipo = e.id_equipo " +
+                "WHERE LOWER(e.nombre) LIKE ? OR LOWER(p.equipo_rival) LIKE ? OR LOWER(p.ubicacion) LIKE ? " +
                 "ORDER BY p.fecha DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, idEquipo);
+            String patron = "%" + filtro.toLowerCase() + "%";
+            pstmt.setString(1, patron);
+            pstmt.setString(2, patron);
+            pstmt.setString(3, patron);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -62,18 +59,7 @@ public class PartidoDAOImpl implements PartidoDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            if (partido.getIdEquipo() != null) {
-                pstmt.setInt(1, partido.getIdEquipo());
-            } else {
-                pstmt.setNull(1, Types.INTEGER);
-            }
-
-            pstmt.setDate(2, Date.valueOf(partido.getFecha()));
-            pstmt.setString(3, partido.getEquipoRival());
-            pstmt.setString(4, partido.getUbicacion());
-            pstmt.setInt(5, partido.getResultadoPropio());
-            pstmt.setInt(6, partido.getResultadoRival());
-
+            rellenarStatementPartido(pstmt, partido);
             pstmt.executeUpdate();
         }
     }
@@ -85,19 +71,8 @@ public class PartidoDAOImpl implements PartidoDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            if (partido.getIdEquipo() != null) {
-                pstmt.setInt(1, partido.getIdEquipo());
-            } else {
-                pstmt.setNull(1, Types.INTEGER);
-            }
-
-            pstmt.setDate(2, Date.valueOf(partido.getFecha()));
-            pstmt.setString(3, partido.getEquipoRival());
-            pstmt.setString(4, partido.getUbicacion());
-            pstmt.setInt(5, partido.getResultadoPropio());
-            pstmt.setInt(6, partido.getResultadoRival());
+            rellenarStatementPartido(pstmt, partido);
             pstmt.setInt(7, partido.getIdPartido());
-
             pstmt.executeUpdate();
         }
     }
@@ -112,6 +87,40 @@ public class PartidoDAOImpl implements PartidoDAO {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         }
+    }
+
+    private List<Partido> ejecutarListado(String sql, Integer idEquipo) throws Exception {
+        List<Partido> partidos = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            if (idEquipo != null) {
+                pstmt.setInt(1, idEquipo);
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    partidos.add(mapearPartido(rs));
+                }
+            }
+        }
+
+        return partidos;
+    }
+
+    private void rellenarStatementPartido(PreparedStatement pstmt, Partido partido) throws Exception {
+        if (partido.getIdEquipo() != null) {
+            pstmt.setInt(1, partido.getIdEquipo());
+        } else {
+            pstmt.setNull(1, Types.INTEGER);
+        }
+
+        pstmt.setDate(2, Date.valueOf(partido.getFecha()));
+        pstmt.setString(3, partido.getEquipoRival());
+        pstmt.setString(4, partido.getUbicacion());
+        pstmt.setInt(5, partido.getResultadoPropio());
+        pstmt.setInt(6, partido.getResultadoRival());
     }
 
     private Partido mapearPartido(ResultSet rs) throws Exception {

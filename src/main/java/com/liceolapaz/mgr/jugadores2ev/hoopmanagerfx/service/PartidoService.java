@@ -18,6 +18,13 @@ public class PartidoService {
         return partidoDAO.getPartidosPorEquipo(idEquipo);
     }
 
+    public List<Partido> buscarPartidos(String filtro) throws Exception {
+        if (filtro == null || filtro.trim().isEmpty()) {
+            return obtenerTodosLosPartidos();
+        }
+        return partidoDAO.buscar(filtro.trim());
+    }
+
     public void registrarPartido(Partido partido) throws Exception {
         validarPartido(partido);
         partidoDAO.addPartido(partido);
