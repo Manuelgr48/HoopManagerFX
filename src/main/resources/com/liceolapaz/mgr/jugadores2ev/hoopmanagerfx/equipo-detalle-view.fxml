@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.EquipoDetalleController">
+
+    <Label fx:id="lblTituloEquipo" text="Equipo" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+    <HBox spacing="20">
+        <Label fx:id="lblCategoria" />
+        <Label fx:id="lblPresupuesto" />
+    </HBox>
+
+    <TableView fx:id="tablaJugadores" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="130"/>
+            <TableColumn fx:id="colApellidos" text="Apellidos" prefWidth="160"/>
+            <TableColumn fx:id="colDorsal" text="Dorsal" prefWidth="80"/>
+            <TableColumn fx:id="colPosicion" text="Posicion" prefWidth="120"/>
+            <TableColumn fx:id="colAltura" text="Altura" prefWidth="90"/>
+        </columns>
+    </TableView>
+
+    <HBox alignment="CENTER_RIGHT">
+        <Button fx:id="btnVerEstadisticas" text="Ver estadisticas del jugador" onAction="#verEstadisticasJugador" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" />
+    </HBox>
+
+    <GridPane fx:id="formularioJugador" hgap="10" vgap="10">
+        <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="txtNombre" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Apellidos:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        <TextField fx:id="txtApellidos" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+        <Label text="Dorsal:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="txtDorsal" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Posicion:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+        <TextField fx:id="txtPosicion" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+        <Label text="Altura:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="txtAltura" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <HBox fx:id="botonesCrud" spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Anadir jugador" onAction="#anadirJugador" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Button text="Modificar jugador" onAction="#modificarJugador" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Button text="Eliminar jugador" onAction="#eliminarJugador" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Button text="Limpiar" onAction="#limpiarFormularioJugador" />
+    </HBox>
+
+    <BarChart fx:id="graficoRendimiento" animated="false" prefHeight="250">
+        <xAxis>
+            <CategoryAxis label="Rival" />
+        </xAxis>
+        <yAxis>
+            <NumberAxis label="Puntos" />
+        </yAxis>
+    </BarChart>
+</VBox>

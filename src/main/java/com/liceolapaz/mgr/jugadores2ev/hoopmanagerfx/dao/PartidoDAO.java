@@ -8,4 +8,5 @@ public interface PartidoDAO {
     void updatePartido(Partido partido) throws Exception;
     void deletePartido(int id) throws Exception;
     List<Partido> getAllPartidos() throws Exception;
+    List<Partido> getPartidosPorEquipo(int idEquipo) throws Exception;
 }

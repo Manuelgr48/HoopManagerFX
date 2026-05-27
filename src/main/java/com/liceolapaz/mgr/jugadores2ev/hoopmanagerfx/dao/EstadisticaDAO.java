@@ -6,6 +6,8 @@ import java.util.List;
 public interface EstadisticaDAO {
     List<Estadistica> obtenerTodas();
 
+    List<Estadistica> obtenerPorJugador(int idJugador);
+
     boolean insertar(Estadistica estadistica);
 
     boolean actualizar(Estadistica estadistica);

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 public class Partido {
     private int idPartido;
+    private Integer idEquipo;
+    private String nombreEquipo;
     private LocalDate fecha;
     private String equipoRival;
     private String ubicacion;
@@ -13,8 +15,10 @@ public class Partido {
     public Partido() {
     }
 
-    public Partido(int idPartido, LocalDate fecha, String equipoRival, String ubicacion, int resultadoPropio, int resultadoRival) {
+    public Partido(int idPartido, Integer idEquipo, String nombreEquipo, LocalDate fecha, String equipoRival, String ubicacion, int resultadoPropio, int resultadoRival) {
         this.idPartido = idPartido;
+        this.idEquipo = idEquipo;
+        this.nombreEquipo = nombreEquipo;
         this.fecha = fecha;
         this.equipoRival = equipoRival;
         this.ubicacion = ubicacion;
@@ -22,7 +26,8 @@ public class Partido {
         this.resultadoRival = resultadoRival;
     }
 
-    public Partido(LocalDate fecha, String equipoRival, String ubicacion, int resultadoPropio, int resultadoRival) {
+    public Partido(Integer idEquipo, LocalDate fecha, String equipoRival, String ubicacion, int resultadoPropio, int resultadoRival) {
+        this.idEquipo = idEquipo;
         this.fecha = fecha;
         this.equipoRival = equipoRival;
         this.ubicacion = ubicacion;
@@ -30,21 +35,67 @@ public class Partido {
         this.resultadoRival = resultadoRival;
     }
 
-    public int getIdPartido() { return idPartido; }
-    public void setIdPartido(int idPartido) { this.idPartido = idPartido; }
+    public int getIdPartido() {
+        return idPartido;
+    }
 
-    public LocalDate getFecha() { return fecha; }
-    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+    public void setIdPartido(int idPartido) {
+        this.idPartido = idPartido;
+    }
 
-    public String getEquipoRival() { return equipoRival; }
-    public void setEquipoRival(String equipoRival) { this.equipoRival = equipoRival; }
+    public Integer getIdEquipo() {
+        return idEquipo;
+    }
 
-    public String getUbicacion() { return ubicacion; }
-    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
+    public void setIdEquipo(Integer idEquipo) {
+        this.idEquipo = idEquipo;
+    }
 
-    public int getResultadoPropio() { return resultadoPropio; }
-    public void setResultadoPropio(int resultadoPropio) { this.resultadoPropio = resultadoPropio; }
+    public String getNombreEquipo() {
+        return nombreEquipo != null ? nombreEquipo : "Sin equipo";
+    }
 
-    public int getResultadoRival() { return resultadoRival; }
-    public void setResultadoRival(int resultadoRival) { this.resultadoRival = resultadoRival; }
+    public void setNombreEquipo(String nombreEquipo) {
+        this.nombreEquipo = nombreEquipo;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getEquipoRival() {
+        return equipoRival;
+    }
+
+    public void setEquipoRival(String equipoRival) {
+        this.equipoRival = equipoRival;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public int getResultadoPropio() {
+        return resultadoPropio;
+    }
+
+    public void setResultadoPropio(int resultadoPropio) {
+        this.resultadoPropio = resultadoPropio;
+    }
+
+    public int getResultadoRival() {
+        return resultadoRival;
+    }
+
+    public void setResultadoRival(int resultadoRival) {
+        this.resultadoRival = resultadoRival;
+    }
 }
