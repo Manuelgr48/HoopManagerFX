@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -17,9 +16,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class LoginController {
+
     @FXML private TextField txtCorreo;
     @FXML private PasswordField txtPassword;
     @FXML private Label lblMensaje;
+
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     @FXML
@@ -39,26 +40,20 @@ public class LoginController {
 
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/dashboard-view.fxml"));
+                Parent root = loader.load();
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-                stage.setScene(new Scene(loader.load()));
+                stage.getScene().setRoot(root);
                 stage.setTitle("HoopManagerFX - Panel Principal");
 
-                stage.setResizable(true);
                 stage.setMaximized(true);
-
-                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-                stage.setX(screenBounds.getMinX());
-                stage.setY(screenBounds.getMinY());
-                stage.setWidth(screenBounds.getWidth());
-                stage.setHeight(screenBounds.getHeight());
 
             } catch (IOException e) {
                 mostrarError("Error al cargar la interfaz principal.");
                 e.printStackTrace();
             }
         } else {
-            mostrarError("Usuario o contraseña incorrectos.");
+            mostrarError("Correo o contraseña incorrectos.");
         }
     }
 
@@ -68,6 +63,7 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/register-view.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
             stage.getScene().setRoot(root);
             stage.setTitle("HoopManagerFX - Registro");
 
@@ -78,7 +74,7 @@ public class LoginController {
     }
 
     private void mostrarError(String mensaje) {
-        lblMensaje.setStyle("-fx-text-fill: red;");
+        lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
         lblMensaje.setText(mensaje);
     }
 }

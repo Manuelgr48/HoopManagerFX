@@ -5,9 +5,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -53,7 +53,6 @@ public class DashboardController {
         cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/estadistica-view.fxml");
     }
 
-    // Nuevo método para cargar la vista de usuarios
     @FXML
     private void mostrarUsuarios() {
         cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/usuarios-view.fxml");
@@ -75,9 +74,11 @@ public class DashboardController {
         SessionManager.getInstance().cerrarSesion();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/login-view.fxml"));
+            Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(loader.load()));
-            stage.centerOnScreen();
+            stage.getScene().setRoot(root);
+            stage.setTitle("HoopManagerFX - Login");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
