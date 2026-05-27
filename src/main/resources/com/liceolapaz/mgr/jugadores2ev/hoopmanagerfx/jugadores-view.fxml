@@ -5,7 +5,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="550.0" prefWidth="850.0" spacing="15.0" style="-fx-background-color: #ecf0f1;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.JugadoresController">
+<VBox prefHeight="550.0"
+      prefWidth="850.0"
+      spacing="15.0"
+      style="-fx-background-color: #ecf0f1;"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.JugadoresController">
+
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -16,7 +23,9 @@
         </font>
     </Label>
 
-    <TextField fx:id="tfBuscador" promptText="Buscar por nombre, apellidos o equipo..." style="-fx-font-size: 14px; -fx-padding: 8px;" />
+    <TextField fx:id="tfBuscador"
+               promptText="Buscar por nombre, apellidos o equipo..."
+               style="-fx-font-size: 14px; -fx-padding: 8px;" />
 
     <TableView fx:id="tablaJugadores" VBox.vgrow="ALWAYS">
         <columns>
@@ -50,13 +59,13 @@
         <TextField fx:id="txtAltura" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
         <Label text="Equipo:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-        <TextField fx:id="txtEquipo" promptText="Nombre del equipo" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+        <ComboBox fx:id="cbEquipo" promptText="Sin equipo" prefWidth="220.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
     </GridPane>
 
     <HBox fx:id="botonesCrud" alignment="CENTER_RIGHT" spacing="10.0">
-        <Button fx:id="btnAnadir" text="Anadir" onAction="#anadirJugador" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" />
-        <Button fx:id="btnModificar" text="Modificar" onAction="#modificarJugador" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;" />
-        <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminarJugador" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Button text="Anadir" onAction="#anadirJugador" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Button text="Modificar" onAction="#modificarJugador" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <Button text="Eliminar" onAction="#eliminarJugador" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" />
         <Button text="Limpiar" onAction="#limpiarCampos" />
     </HBox>
 </VBox>

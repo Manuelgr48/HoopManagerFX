@@ -2,6 +2,7 @@ package com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller;
 
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.EquipoDAO;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.JugadorDAO;
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Equipo;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Jugador;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.SessionManager;
 import javafx.collections.FXCollections;
@@ -39,27 +40,22 @@ public class JugadoresController implements Initializable {
     @FXML private TextField txtDorsal;
     @FXML private TextField txtPosicion;
     @FXML private TextField txtAltura;
-    @FXML private TextField txtEquipo;
+    @FXML private ComboBox<Equipo> cbEquipo;
 
     @FXML private GridPane formularioJugador;
     @FXML private HBox botonesCrud;
 
-    @FXML private Button btnAnadir;
-    @FXML private Button btnModificar;
-    @FXML private Button btnEliminar;
-
     private final JugadorDAO jugadorDAO = new JugadorDAO();
     private final EquipoDAO equipoDAO = new EquipoDAO();
 
-    private ObservableList<Jugador> listaJugadores;
-    private FilteredList<Jugador> filteredData;
+    private final ObservableList<Jugador> listaJugadores = FXCollections.observableArrayList();
+    private final ObservableList<Equipo> listaEquipos = FXCollections.observableArrayList();
 
+    private FilteredList<Jugador> filteredData;
     private Integer idEquipoForzado;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        listaJugadores = FXCollections.observableArrayList();
-
         colId.setCellValueFactory(new PropertyValueFactory<>("idJugador"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colApellidos.setCellValueFactory(new PropertyValueFactory<>("apellidos"));
@@ -68,6 +64,9 @@ public class JugadoresController implements Initializable {
         colAltura.setCellValueFactory(new PropertyValueFactory<>("altura"));
         colEquipo.setCellValueFactory(new PropertyValueFactory<>("nombreEquipo"));
 
+        cbEquipo.setItems(listaEquipos);
+
+        cargarEquipos();
         configurarPermisos();
         configurarBuscador();
         cargarJugadores();
@@ -79,22 +78,35 @@ public class JugadoresController implements Initializable {
         });
     }
 
+    private void cargarEquipos() {
+        listaEquipos.clear();
+        listaEquipos.addAll(equipoDAO.obtenerTodos());
+    }
+
     private void configurarPermisos() {
         SessionManager sesion = SessionManager.getInstance();
 
         if (sesion.esAdmin()) {
             lblTitulo.setText("Gestion de Jugadores");
             mostrarCrud(true);
-            txtEquipo.setDisable(false);
+            cbEquipo.setDisable(false);
             idEquipoForzado = null;
             return;
         }
 
         if (sesion.esEntrenador()) {
+            if (sesion.getIdEquipo() == null) {
+                lblTitulo.setText("Entrenador sin equipo asignado");
+                mostrarCrud(false);
+                idEquipoForzado = -1;
+                return;
+            }
+
             lblTitulo.setText("Mi equipo");
             mostrarCrud(true);
-            txtEquipo.setDisable(true);
+            cbEquipo.setDisable(true);
             idEquipoForzado = sesion.getIdEquipo();
+            cbEquipo.setValue(buscarEquipoPorId(idEquipoForzado));
             return;
         }
 
@@ -148,26 +160,23 @@ public class JugadoresController implements Initializable {
         txtDorsal.setText(String.valueOf(jugador.getDorsal()));
         txtPosicion.setText(jugador.getPosicion());
         txtAltura.setText(String.valueOf(jugador.getAltura()));
-        txtEquipo.setText(jugador.getNombreEquipo().equals("Agente Libre") ? "" : jugador.getNombreEquipo());
+        cbEquipo.setValue(buscarEquipoPorId(jugador.getIdEquipo()));
     }
 
     @FXML
     private void anadirJugador() {
-        if (!validarCampos()) {
-            return;
-        }
+        if (!validarCampos()) return;
 
         Integer idEquipo = obtenerIdEquipoParaGuardar();
+        int dorsal = Integer.parseInt(txtDorsal.getText().trim());
 
-        if (idEquipo == null && !txtEquipo.getText().trim().isEmpty()) {
-            return;
-        }
+        if (!validarDorsalDisponible(idEquipo, dorsal, null)) return;
 
         Jugador nuevoJugador = new Jugador(
                 0,
                 txtNombre.getText().trim(),
                 txtApellidos.getText().trim(),
-                Integer.parseInt(txtDorsal.getText().trim()),
+                dorsal,
                 txtPosicion.getText().trim(),
                 Double.parseDouble(txtAltura.getText().trim()),
                 idEquipo,
@@ -197,21 +206,22 @@ public class JugadoresController implements Initializable {
             return;
         }
 
-        if (!validarCampos()) {
+        if (!validarCampos()) return;
+
+        if (!confirmar("Confirmar modificacion", "Seguro que quieres modificar este jugador?")) {
             return;
         }
 
         Integer idEquipo = obtenerIdEquipoParaGuardar();
+        int dorsal = Integer.parseInt(txtDorsal.getText().trim());
 
-        if (idEquipo == null && !txtEquipo.getText().trim().isEmpty()) {
-            return;
-        }
+        if (!validarDorsalDisponible(idEquipo, dorsal, seleccionado.getIdJugador())) return;
 
         Jugador jugadorModificado = new Jugador(
                 seleccionado.getIdJugador(),
                 txtNombre.getText().trim(),
                 txtApellidos.getText().trim(),
-                Integer.parseInt(txtDorsal.getText().trim()),
+                dorsal,
                 txtPosicion.getText().trim(),
                 Double.parseDouble(txtAltura.getText().trim()),
                 idEquipo,
@@ -241,20 +251,16 @@ public class JugadoresController implements Initializable {
             return;
         }
 
-        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
-        alerta.setTitle("Confirmar eliminacion");
-        alerta.setHeaderText("Seguro que quieres eliminar a este jugador?");
+        if (!confirmar("Confirmar eliminacion", "Seguro que quieres eliminar a este jugador?")) {
+            return;
+        }
 
-        Optional<ButtonType> resultado = alerta.showAndWait();
-
-        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            if (jugadorDAO.eliminar(seleccionado.getIdJugador())) {
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Jugador eliminado correctamente.");
-                cargarJugadores();
-                limpiarCampos();
-            } else {
-                mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el jugador.");
-            }
+        if (jugadorDAO.eliminar(seleccionado.getIdJugador())) {
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Jugador eliminado correctamente.");
+            cargarJugadores();
+            limpiarCampos();
+        } else {
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el jugador.");
         }
     }
 
@@ -268,8 +274,10 @@ public class JugadoresController implements Initializable {
         txtPosicion.clear();
         txtAltura.clear();
 
-        if (!txtEquipo.isDisabled()) {
-            txtEquipo.clear();
+        if (idEquipoForzado == null) {
+            cbEquipo.setValue(null);
+        } else {
+            cbEquipo.setValue(buscarEquipoPorId(idEquipoForzado));
         }
     }
 
@@ -287,23 +295,12 @@ public class JugadoresController implements Initializable {
     }
 
     private Integer obtenerIdEquipoParaGuardar() {
-        if (idEquipoForzado != null) {
+        if (idEquipoForzado != null && idEquipoForzado > 0) {
             return idEquipoForzado;
         }
 
-        String nombreEquipo = txtEquipo.getText().trim();
-
-        if (nombreEquipo.isEmpty()) {
-            return null;
-        }
-
-        Integer idEquipo = equipoDAO.obtenerIdPorNombre(nombreEquipo);
-
-        if (idEquipo == null) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Equipo no encontrado", "El equipo '" + nombreEquipo + "' no existe.");
-        }
-
-        return idEquipo;
+        Equipo equipo = cbEquipo.getValue();
+        return equipo != null ? equipo.getIdEquipo() : null;
     }
 
     private boolean validarCampos() {
@@ -317,14 +314,61 @@ public class JugadoresController implements Initializable {
         }
 
         try {
-            Integer.parseInt(txtDorsal.getText().trim());
-            Double.parseDouble(txtAltura.getText().trim());
+            int dorsal = Integer.parseInt(txtDorsal.getText().trim());
+            double altura = Double.parseDouble(txtAltura.getText().trim());
+
+            if (dorsal <= 0) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Formato incorrecto", "El dorsal debe ser mayor que 0.");
+                return false;
+            }
+
+            if (altura <= 0) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Formato incorrecto", "La altura debe ser mayor que 0.");
+                return false;
+            }
         } catch (NumberFormatException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Formato incorrecto", "Dorsal debe ser entero y altura decimal.");
             return false;
         }
 
         return true;
+    }
+
+    private boolean validarDorsalDisponible(Integer idEquipo, int dorsal, Integer idJugadorIgnorado) {
+        if (idEquipo == null) {
+            return true;
+        }
+
+        if (jugadorDAO.existeDorsalEnEquipo(idEquipo, dorsal, idJugadorIgnorado)) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Dorsal repetido", "Ya existe un jugador con ese dorsal en este equipo.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private Equipo buscarEquipoPorId(Integer idEquipo) {
+        if (idEquipo == null) {
+            return null;
+        }
+
+        for (Equipo equipo : listaEquipos) {
+            if (equipo.getIdEquipo() == idEquipo) {
+                return equipo;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean confirmar(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+
+        Optional<ButtonType> resultado = alerta.showAndWait();
+        return resultado.isPresent() && resultado.get() == ButtonType.OK;
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {

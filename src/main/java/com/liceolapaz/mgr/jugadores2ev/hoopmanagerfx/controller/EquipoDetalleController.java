@@ -29,6 +29,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.service.ReporteService;
+import javafx.stage.FileChooser;
+
+import java.awt.Desktop;
+import java.io.File;
+
 public class EquipoDetalleController implements Initializable {
 
     @FXML private Label lblTituloEquipo;
@@ -82,6 +88,36 @@ public class EquipoDetalleController implements Initializable {
         configurarPermisos();
         cargarJugadores();
         cargarGraficoRendimiento();
+    }
+    @FXML
+    private void generarInformeEquipo() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar informe del equipo");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+
+        String nombreArchivo = "Informe_" + equipo.getNombre().replace(" ", "_") + ".pdf";
+        fileChooser.setInitialFileName(nombreArchivo);
+
+        File file = fileChooser.showSaveDialog(lblTituloEquipo.getScene().getWindow());
+
+        if (file == null) {
+            return;
+        }
+
+        try {
+            ReporteService reporteService = new ReporteService();
+            reporteService.generarInformeEquipo(file.getAbsolutePath(), equipo.getIdEquipo(), equipo.getNombre());
+
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Informe generado correctamente.");
+
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(file);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo generar el informe: " + e.getMessage());
+        }
     }
 
     private void configurarCabecera() {
@@ -162,11 +198,17 @@ public class EquipoDetalleController implements Initializable {
     private void anadirJugador() {
         if (!validarCamposJugador()) return;
 
+        int dorsal = Integer.parseInt(txtDorsal.getText().trim());
+
+        if (!validarDorsalDisponible(dorsal, null)) {
+            return;
+        }
+
         Jugador jugador = new Jugador(
                 0,
                 txtNombre.getText().trim(),
                 txtApellidos.getText().trim(),
-                Integer.parseInt(txtDorsal.getText().trim()),
+                dorsal,
                 txtPosicion.getText().trim(),
                 Double.parseDouble(txtAltura.getText().trim()),
                 equipo.getIdEquipo(),
@@ -193,11 +235,21 @@ public class EquipoDetalleController implements Initializable {
 
         if (!validarCamposJugador()) return;
 
+        if (!confirmar("Confirmar modificacion", "Seguro que quieres modificar este jugador?")) {
+            return;
+        }
+
+        int dorsal = Integer.parseInt(txtDorsal.getText().trim());
+
+        if (!validarDorsalDisponible(dorsal, seleccionado.getIdJugador())) {
+            return;
+        }
+
         Jugador jugador = new Jugador(
                 seleccionado.getIdJugador(),
                 txtNombre.getText().trim(),
                 txtApellidos.getText().trim(),
-                Integer.parseInt(txtDorsal.getText().trim()),
+                dorsal,
                 txtPosicion.getText().trim(),
                 Double.parseDouble(txtAltura.getText().trim()),
                 equipo.getIdEquipo(),
@@ -222,19 +274,16 @@ public class EquipoDetalleController implements Initializable {
             return;
         }
 
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar eliminacion");
-        confirmacion.setHeaderText("Seguro que quieres eliminar este jugador?");
-        Optional<ButtonType> resultado = confirmacion.showAndWait();
+        if (!confirmar("Confirmar eliminacion", "Seguro que quieres eliminar este jugador?")) {
+            return;
+        }
 
-        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            if (jugadorDAO.eliminar(seleccionado.getIdJugador())) {
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Jugador eliminado correctamente.");
-                cargarJugadores();
-                limpiarFormularioJugador();
-            } else {
-                mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el jugador.");
-            }
+        if (jugadorDAO.eliminar(seleccionado.getIdJugador())) {
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Exito", "Jugador eliminado correctamente.");
+            cargarJugadores();
+            limpiarFormularioJugador();
+        } else {
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el jugador.");
         }
     }
 
@@ -295,6 +344,24 @@ public class EquipoDetalleController implements Initializable {
         }
 
         return true;
+    }
+    private boolean validarDorsalDisponible(int dorsal, Integer idJugadorIgnorado) {
+        if (jugadorDAO.existeDorsalEnEquipo(equipo.getIdEquipo(), dorsal, idJugadorIgnorado)) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Dorsal repetido", "Ya existe un jugador con ese dorsal en este equipo.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean confirmar(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+
+        Optional<ButtonType> resultado = alerta.showAndWait();
+        return resultado.isPresent() && resultado.get() == ButtonType.OK;
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
