@@ -1,53 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="25"
+<VBox spacing="28"
+      alignment="CENTER"
       xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.InicioController"
-      style="-fx-padding: 35;">
+      style="-fx-padding: 42; -fx-background-color: #f4f6f8;">
 
-    <VBox spacing="8">
+    <VBox spacing="6" alignment="CENTER">
         <Label fx:id="lblBienvenida"
-               text="Bienvenido a HoopManager"
-               style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
+               text="HoopManager"
+               style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
 
         <Label fx:id="lblRol"
-               text="Rol actual"
-               style="-fx-font-size: 15px; -fx-text-fill: #4b5563;" />
+               text="Sesion iniciada"
+               style="-fx-font-size: 15px; -fx-text-fill: #6b7280;" />
     </VBox>
 
-    <HBox spacing="18">
-        <VBox spacing="8" prefWidth="190" style="-fx-background-color: white; -fx-padding: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-background-radius: 8;">
-            <Label text="Equipos" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;" />
-            <Label fx:id="lblTotalEquipos" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #2563eb;" />
+    <TilePane hgap="22"
+              vgap="22"
+              prefColumns="2"
+              alignment="CENTER"
+              maxWidth="760">
+
+        <VBox spacing="12"
+              alignment="CENTER"
+              onMouseClicked="#irEquipos"
+              prefWidth="330"
+              prefHeight="190"
+              style="-fx-cursor: hand; -fx-background-color: white; -fx-border-color: #2563eb; -fx-border-width: 0 0 5 0; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.13), 12, 0, 0, 4);">
+
+            <Label text="EQ"
+                   style="-fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8; -fx-font-size: 28px; -fx-font-weight: bold; -fx-alignment: center; -fx-min-width: 72; -fx-min-height: 72; -fx-background-radius: 36;" />
+
+            <Label text="Equipos"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
+
+            <Label text="Consulta equipos y accede a su informacion completa"
+                   wrapText="true"
+                   textAlignment="CENTER"
+                   style="-fx-font-size: 13px; -fx-text-fill: #6b7280;" />
         </VBox>
 
-        <VBox spacing="8" prefWidth="190" style="-fx-background-color: white; -fx-padding: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-background-radius: 8;">
-            <Label text="Jugadores" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;" />
-            <Label fx:id="lblTotalJugadores" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #16a34a;" />
+        <VBox spacing="12"
+              alignment="CENTER"
+              onMouseClicked="#irJugadores"
+              prefWidth="330"
+              prefHeight="190"
+              style="-fx-cursor: hand; -fx-background-color: white; -fx-border-color: #16a34a; -fx-border-width: 0 0 5 0; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.13), 12, 0, 0, 4);">
+
+            <Label text="JU"
+                   style="-fx-background-color: #dcfce7; -fx-text-fill: #15803d; -fx-font-size: 28px; -fx-font-weight: bold; -fx-alignment: center; -fx-min-width: 72; -fx-min-height: 72; -fx-background-radius: 36;" />
+
+            <Label text="Jugadores"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
+
+            <Label text="Gestiona jugadores y revisa la plantilla general"
+                   wrapText="true"
+                   textAlignment="CENTER"
+                   style="-fx-font-size: 13px; -fx-text-fill: #6b7280;" />
         </VBox>
 
-        <VBox spacing="8" prefWidth="190" style="-fx-background-color: white; -fx-padding: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-background-radius: 8;">
-            <Label text="Partidos" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;" />
-            <Label fx:id="lblTotalPartidos" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #dc2626;" />
+        <VBox spacing="12"
+              alignment="CENTER"
+              onMouseClicked="#irPartidos"
+              prefWidth="330"
+              prefHeight="190"
+              style="-fx-cursor: hand; -fx-background-color: white; -fx-border-color: #dc2626; -fx-border-width: 0 0 5 0; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.13), 12, 0, 0, 4);">
+
+            <Label text="PA"
+                   style="-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; -fx-font-size: 28px; -fx-font-weight: bold; -fx-alignment: center; -fx-min-width: 72; -fx-min-height: 72; -fx-background-radius: 36;" />
+
+            <Label text="Partidos"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
+
+            <Label text="Registra partidos, rivales, ubicaciones y resultados"
+                   wrapText="true"
+                   textAlignment="CENTER"
+                   style="-fx-font-size: 13px; -fx-text-fill: #6b7280;" />
         </VBox>
-    </HBox>
 
-    <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-background-radius: 8;">
-        <Label text="Resumen de uso"
-               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
+        <VBox fx:id="cardUsuarios"
+              spacing="12"
+              alignment="CENTER"
+              onMouseClicked="#irUsuarios"
+              prefWidth="330"
+              prefHeight="190"
+              style="-fx-cursor: hand; -fx-background-color: white; -fx-border-color: #7c3aed; -fx-border-width: 0 0 5 0; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.13), 12, 0, 0, 4);">
 
-        <Label fx:id="lblSugerencia"
-               wrapText="true"
-               style="-fx-font-size: 15px; -fx-text-fill: #374151;" />
+            <Label text="US"
+                   style="-fx-background-color: #ede9fe; -fx-text-fill: #6d28d9; -fx-font-size: 28px; -fx-font-weight: bold; -fx-alignment: center; -fx-min-width: 72; -fx-min-height: 72; -fx-background-radius: 36;" />
 
-        <Label text="Desde el menu lateral puedes entrar en las tablas generales. Para trabajar por capas, entra en Equipos y abre la informacion de un equipo concreto."
-               wrapText="true"
-               style="-fx-font-size: 14px; -fx-text-fill: #6b7280;" />
-    </VBox>
+            <Label text="Usuarios"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
+
+            <Label text="Crea cuentas, asigna roles y vincula equipos"
+                   wrapText="true"
+                   textAlignment="CENTER"
+                   style="-fx-font-size: 13px; -fx-text-fill: #6b7280;" />
+        </VBox>
+    </TilePane>
 
 </VBox>

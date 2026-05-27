@@ -5,23 +5,29 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.DashboardController">
+            fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.DashboardController"
+            style="-fx-background-color: #f4f6f8;">
 
-    <left>
-        <VBox spacing="10" prefWidth="210" style="-fx-padding: 20; -fx-background-color: #1f2937;">
-            <Label text="HoopManager"
-                   style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;" />
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-padding: 14 22; -fx-background-color: #1f2937;">
+                <Label text="HoopManager"
+                       style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;" />
 
-            <Separator />
+                <Pane HBox.hgrow="ALWAYS" />
 
-            <Button fx:id="btnInicio" text="Inicio" maxWidth="Infinity" onAction="#mostrarInicio" />
-            <Button fx:id="btnEquipos" text="Equipos" maxWidth="Infinity" onAction="#mostrarEquipos" />
-            <Button fx:id="btnJugadores" text="Jugadores" maxWidth="Infinity" onAction="#mostrarJugadores" />
-            <Button fx:id="btnPartidos" text="Partidos" maxWidth="Infinity" onAction="#mostrarPartidos" />
-            <Button fx:id="btnRendimiento" text="Rendimiento" maxWidth="Infinity" onAction="#mostrarRendimiento" />
-            <Button fx:id="btnUsuarios" text="Gestion usuarios" maxWidth="Infinity" onAction="#mostrarUsuarios" />
+                <Button text="Inicio"
+                        onAction="#mostrarInicio"
+                        style="-fx-background-color: white; -fx-text-fill: #111827; -fx-font-weight: bold;" />
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 10 24; -fx-background-color: white; -fx-border-color: #e5e7eb;">
+                <Label fx:id="lblBreadcrumb"
+                       text="Inicio"
+                       style="-fx-font-size: 14px; -fx-text-fill: #4b5563; -fx-font-weight: bold;" />
+            </HBox>
         </VBox>
-    </left>
+    </top>
 
     <center>
         <StackPane fx:id="contentArea" style="-fx-background-color: #f4f6f8;" />

@@ -1,30 +1,22 @@
 package com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller;
 
-import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.EquipoDAO;
-import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.JugadorDAO;
-import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.service.PartidoService;
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.AppShell;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.SessionManager;
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.View;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 public class InicioController {
 
     @FXML private Label lblBienvenida;
     @FXML private Label lblRol;
-    @FXML private Label lblTotalEquipos;
-    @FXML private Label lblTotalJugadores;
-    @FXML private Label lblTotalPartidos;
-    @FXML private Label lblSugerencia;
-
-    private final EquipoDAO equipoDAO = new EquipoDAO();
-    private final JugadorDAO jugadorDAO = new JugadorDAO();
-    private final PartidoService partidoService = new PartidoService();
+    @FXML private VBox cardUsuarios;
 
     @FXML
     public void initialize() {
         cargarBienvenida();
-        cargarResumen();
-        cargarSugerencia();
+        configurarPermisos();
     }
 
     private void cargarBienvenida() {
@@ -34,37 +26,39 @@ public class InicioController {
         String rol = session.getRol();
 
         if (usuario == null || usuario.isBlank()) {
-            lblBienvenida.setText("Bienvenido a HoopManager");
+            lblBienvenida.setText("HoopManager");
             lblRol.setText("Sesion no identificada");
             return;
         }
 
-        lblBienvenida.setText("Bienvenido, " + usuario);
-        lblRol.setText("Rol actual: " + rol);
+        lblBienvenida.setText("HoopManager");
+        lblRol.setText("Sesion iniciada como " + usuario + " | " + rol);
     }
 
-    private void cargarResumen() {
-        try {
-            lblTotalEquipos.setText(String.valueOf(equipoDAO.obtenerTodos().size()));
-            lblTotalJugadores.setText(String.valueOf(jugadorDAO.obtenerTodos().size()));
-            lblTotalPartidos.setText(String.valueOf(partidoService.obtenerTodosLosPartidos().size()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            lblTotalEquipos.setText("-");
-            lblTotalJugadores.setText("-");
-            lblTotalPartidos.setText("-");
-        }
+    private void configurarPermisos() {
+        boolean esAdmin = SessionManager.getInstance().esAdmin();
+
+        cardUsuarios.setVisible(esAdmin);
+        cardUsuarios.setManaged(esAdmin);
     }
 
-    private void cargarSugerencia() {
-        SessionManager session = SessionManager.getInstance();
+    @FXML
+    private void irEquipos() {
+        AppShell.loadView(View.EQUIPOS);
+    }
 
-        if (session.esAdmin()) {
-            lblSugerencia.setText("Puedes gestionar usuarios, equipos, jugadores, partidos y consultar el rendimiento general.");
-        } else if (session.esEntrenador()) {
-            lblSugerencia.setText("Accede a Equipos, entra en tu equipo asignado y gestiona sus jugadores y estadisticas.");
-        } else {
-            lblSugerencia.setText("Consulta equipos, jugadores, partidos y estadisticas desde las vistas principales.");
-        }
+    @FXML
+    private void irJugadores() {
+        AppShell.loadView(View.JUGADORES);
+    }
+
+    @FXML
+    private void irPartidos() {
+        AppShell.loadView(View.PARTIDOS);
+    }
+
+    @FXML
+    private void irUsuarios() {
+        AppShell.loadView(View.USUARIOS);
     }
 }
