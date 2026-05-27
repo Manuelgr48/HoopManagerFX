@@ -1,110 +1,100 @@
 package com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller;
 
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.SessionManager;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class DashboardController {
 
     @FXML private StackPane contentArea;
 
+    @FXML private Button btnInicio;
+    @FXML private Button btnEquipos;
     @FXML private Button btnJugadores;
-    @FXML private Button btnMiEquipo;
+    @FXML private Button btnPartidos;
+    @FXML private Button btnRendimiento;
     @FXML private Button btnUsuarios;
 
     @FXML
     public void initialize() {
-        configurarMenuPorRol();
-        mostrarResumen();
+        contentArea.setId("contentArea");
+        configurarPermisos();
+        mostrarInicio();
     }
 
-    private void configurarMenuPorRol() {
-        SessionManager sesion = SessionManager.getInstance();
+    private void configurarPermisos() {
+        boolean esAdmin = SessionManager.getInstance().esAdmin();
 
-        if (!sesion.esAdmin()) {
-            btnUsuarios.setVisible(false);
-            btnUsuarios.setManaged(false);
-        }
-
-        if (!sesion.esEntrenador()) {
-            btnMiEquipo.setVisible(false);
-            btnMiEquipo.setManaged(false);
-        }
-
-        if (sesion.esEntrenador()) {
-            btnJugadores.setVisible(false);
-            btnJugadores.setManaged(false);
-        }
+        btnUsuarios.setVisible(esAdmin);
+        btnUsuarios.setManaged(esAdmin);
     }
 
     @FXML
-    private void mostrarResumen() {
-        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/resumen-view.fxml");
+    private void mostrarInicio() {
+        cargarVista("inicio-view.fxml");
     }
 
     @FXML
     private void mostrarEquipos() {
-        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/equipos-view.fxml");
+        cargarVista("equipos-view.fxml");
     }
 
     @FXML
     private void mostrarJugadores() {
-        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/jugadores-view.fxml");
-    }
-
-    @FXML
-    private void mostrarMiEquipo() {
-        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/jugadores-view.fxml");
+        cargarVista("jugadores-view.fxml");
     }
 
     @FXML
     private void mostrarPartidos() {
-        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/partidos-view.fxml");
+        cargarVista("partidos-view.fxml");
     }
 
     @FXML
-    private void mostrarEstadisticas() {
-        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/estadistica-view.fxml");
+    private void mostrarRendimiento() {
+        cargarVista("rendimiento-view.fxml");
     }
 
     @FXML
     private void mostrarUsuarios() {
-        cargarVista("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/usuarios-view.fxml");
-    }
-
-    private void cargarVista(String fxmlPath) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Node view = loader.load();
-            contentArea.getChildren().setAll(view);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Error cargando la vista: " + fxmlPath);
+        if (!SessionManager.getInstance().esAdmin()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Acceso denegado", "Solo el administrador puede gestionar usuarios.");
+            return;
         }
+
+        cargarVista("usuarios-view.fxml");
     }
 
-    @FXML
-    private void cerrarSesion(ActionEvent event) {
-        SessionManager.getInstance().cerrarSesion();
-
+    private void cargarVista(String nombreFxml) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/login-view.fxml"));
-            Parent root = loader.load();
+            String ruta = "/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/" + nombreFxml;
+            URL recurso = getClass().getResource(ruta);
 
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-            stage.setTitle("HoopManagerFX - Login");
+            if (recurso == null) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Vista no encontrada", "No se encontro el archivo: " + nombreFxml);
+                return;
+            }
+
+            Parent vista = FXMLLoader.load(recurso);
+            contentArea.getChildren().setAll(vista);
 
         } catch (IOException e) {
             e.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo cargar la vista: " + nombreFxml);
         }
+    }
+
+    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }

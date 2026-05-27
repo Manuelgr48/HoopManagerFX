@@ -1,40 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.DashboardController">
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.DashboardController">
+
     <left>
-        <VBox spacing="15" style="-fx-background-color: #2c3e50; -fx-padding: 20; -fx-pref-width: 200;">
-            <Label text="HoopManager" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
-            <Separator style="-fx-background-color: white;"/>
+        <VBox spacing="10" prefWidth="210" style="-fx-padding: 20; -fx-background-color: #1f2937;">
+            <Label text="HoopManager"
+                   style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;" />
 
-            <Button text="Inicio" onAction="#mostrarResumen" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
+            <Separator />
 
-            <Button text="Equipos" onAction="#mostrarEquipos" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
-
-            <Button fx:id="btnJugadores" text="Jugadores" onAction="#mostrarJugadores" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
-
-            <Button fx:id="btnMiEquipo" text="Mi equipo" onAction="#mostrarMiEquipo" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: #2ecc71; -fx-border-color: #2ecc71; -fx-border-radius: 5; -fx-font-size: 14px; -fx-font-weight: bold;"/>
-
-            <Button text="Partidos" onAction="#mostrarPartidos" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
-
-            <Button text="Estadisticas" onAction="#mostrarEstadisticas" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-radius: 5; -fx-font-size: 14px;"/>
-
-            <Button fx:id="btnUsuarios" text="Gestion Usuarios" onAction="#mostrarUsuarios" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: #f1c40f; -fx-border-color: #f1c40f; -fx-border-radius: 5; -fx-font-size: 14px; -fx-font-weight: bold;"/>
-
-            <Region VBox.vgrow="ALWAYS" />
-
-            <Button text="Cerrar Sesion" onAction="#cerrarSesion" maxWidth="Infinity" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            <Button fx:id="btnInicio" text="Inicio" maxWidth="Infinity" onAction="#mostrarInicio" />
+            <Button fx:id="btnEquipos" text="Equipos" maxWidth="Infinity" onAction="#mostrarEquipos" />
+            <Button fx:id="btnJugadores" text="Jugadores" maxWidth="Infinity" onAction="#mostrarJugadores" />
+            <Button fx:id="btnPartidos" text="Partidos" maxWidth="Infinity" onAction="#mostrarPartidos" />
+            <Button fx:id="btnRendimiento" text="Rendimiento" maxWidth="Infinity" onAction="#mostrarRendimiento" />
+            <Button fx:id="btnUsuarios" text="Gestion usuarios" maxWidth="Infinity" onAction="#mostrarUsuarios" />
         </VBox>
     </left>
 
     <center>
-        <StackPane fx:id="contentArea" style="-fx-padding: 20; -fx-background-color: #ecf0f1;"/>
+        <StackPane fx:id="contentArea" style="-fx-background-color: #f4f6f8;" />
     </center>
+
 </BorderPane>
