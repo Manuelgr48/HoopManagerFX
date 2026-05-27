@@ -2,14 +2,20 @@ package com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller;
 
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.EquipoDAO;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.UsuarioDAO;
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Equipo;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Usuario;
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.SessionManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.util.Optional;
+
 public class UsuariosController {
+
+    @FXML private TextField tfBuscador;
 
     @FXML private TableView<Usuario> tablaUsuarios;
     @FXML private TableColumn<Usuario, Integer> colIdUsuario;
@@ -24,16 +30,21 @@ public class UsuariosController {
     @FXML private TextField txtCorreo;
     @FXML private PasswordField txtPassword;
     @FXML private ComboBox<String> cbRol;
-    @FXML private TextField txtNombreEquipo;
+    @FXML private ComboBox<Equipo> cbEquipo;
     @FXML private Label lblMensaje;
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
     private final EquipoDAO equipoDAO = new EquipoDAO();
-    private ObservableList<Usuario> listaUsuarios;
+
+    private final ObservableList<Usuario> listaUsuarios = FXCollections.observableArrayList();
+    private final ObservableList<Equipo> listaEquipos = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        listaUsuarios = FXCollections.observableArrayList();
+        if (!SessionManager.getInstance().esAdmin()) {
+            mostrarMensaje("Acceso denegado. Solo el administrador puede gestionar usuarios.", true);
+            return;
+        }
 
         colIdUsuario.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -42,26 +53,53 @@ public class UsuariosController {
         colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
         colNombreEquipo.setCellValueFactory(new PropertyValueFactory<>("nombreEquipo"));
 
-        cbRol.setItems(FXCollections.observableArrayList("JUGADOR", "ENTRENADOR", "ADMIN"));
+        tablaUsuarios.setItems(listaUsuarios);
 
-        cargarUsuarios();
+        cbRol.setItems(FXCollections.observableArrayList("JUGADOR", "ENTRENADOR", "ADMIN"));
+        cbEquipo.setItems(listaEquipos);
+
+        tfBuscador.textProperty().addListener((obs, oldText, newText) -> buscarUsuarios());
 
         tablaUsuarios.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, usuario) -> {
             if (usuario != null) {
-                txtNombre.setText(usuario.getNombre());
-                txtApellidos.setText(usuario.getApellidos());
-                txtCorreo.setText(usuario.getCorreo());
-                txtPassword.clear();
-                cbRol.setValue(usuario.getRol());
-                txtNombreEquipo.setText(usuario.getNombreEquipo().equals("Sin asignar") ? "" : usuario.getNombreEquipo());
+                rellenarFormulario(usuario);
             }
         });
+
+        cargarEquipos();
+        cargarUsuarios();
+    }
+
+    private void cargarEquipos() {
+        listaEquipos.clear();
+        listaEquipos.addAll(equipoDAO.obtenerTodos());
     }
 
     private void cargarUsuarios() {
         listaUsuarios.clear();
         listaUsuarios.addAll(usuarioDAO.getAllUsuarios());
-        tablaUsuarios.setItems(listaUsuarios);
+    }
+
+    @FXML
+    private void buscarUsuarios() {
+        String filtro = tfBuscador.getText();
+
+        listaUsuarios.clear();
+
+        if (filtro == null || filtro.trim().isEmpty()) {
+            listaUsuarios.addAll(usuarioDAO.getAllUsuarios());
+        } else {
+            listaUsuarios.addAll(usuarioDAO.buscar(filtro.trim()));
+        }
+    }
+
+    private void rellenarFormulario(Usuario usuario) {
+        txtNombre.setText(usuario.getNombre());
+        txtApellidos.setText(usuario.getApellidos());
+        txtCorreo.setText(usuario.getCorreo());
+        txtPassword.clear();
+        cbRol.setValue(usuario.getRol());
+        cbEquipo.setValue(buscarEquipoPorId(usuario.getIdEquipo()));
     }
 
     @FXML
@@ -70,10 +108,7 @@ public class UsuariosController {
             return;
         }
 
-        Integer idEquipo = obtenerIdEquipoDesdeTexto();
-        if (idEquipo == null && !txtNombreEquipo.getText().trim().isEmpty()) {
-            return;
-        }
+        Integer idEquipo = cbEquipo.getValue() != null ? cbEquipo.getValue().getIdEquipo() : null;
 
         boolean exito = usuarioDAO.registrarUsuario(
                 txtNombre.getText().trim(),
@@ -86,7 +121,7 @@ public class UsuariosController {
 
         if (exito) {
             mostrarMensaje("Usuario creado correctamente.", false);
-            cargarUsuarios();
+            buscarUsuarios();
             limpiarFormulario();
         } else {
             mostrarMensaje("No se pudo crear el usuario. Revisa si el correo ya existe.", true);
@@ -106,10 +141,16 @@ public class UsuariosController {
             return;
         }
 
-        Integer idEquipo = obtenerIdEquipoDesdeTexto();
-        if (idEquipo == null && !txtNombreEquipo.getText().trim().isEmpty()) {
+        if (usuarioDAO.esUltimoAdmin(usuarioSeleccionado.getIdUsuario()) && !"ADMIN".equals(cbRol.getValue())) {
+            mostrarMensaje("No puedes quitar el rol ADMIN al ultimo administrador.", true);
             return;
         }
+
+        if (!confirmar("Confirmar modificacion", "Seguro que quieres modificar este usuario?")) {
+            return;
+        }
+
+        Integer idEquipo = cbEquipo.getValue() != null ? cbEquipo.getValue().getIdEquipo() : null;
 
         boolean exito = usuarioDAO.actualizarUsuario(
                 usuarioSeleccionado.getIdUsuario(),
@@ -123,7 +164,7 @@ public class UsuariosController {
 
         if (exito) {
             mostrarMensaje("Usuario actualizado correctamente.", false);
-            cargarUsuarios();
+            buscarUsuarios();
             limpiarFormulario();
         } else {
             mostrarMensaje("Error al actualizar el usuario.", true);
@@ -139,8 +180,12 @@ public class UsuariosController {
             return;
         }
 
-        if ("ADMIN".equals(usuarioSeleccionado.getRol())) {
-            mostrarMensaje("No puedes borrar a un administrador desde aqui.", true);
+        if (usuarioDAO.esUltimoAdmin(usuarioSeleccionado.getIdUsuario())) {
+            mostrarMensaje("No puedes borrar al ultimo administrador.", true);
+            return;
+        }
+
+        if (!confirmar("Confirmar eliminacion", "Seguro que quieres eliminar este usuario?")) {
             return;
         }
 
@@ -148,7 +193,7 @@ public class UsuariosController {
 
         if (exito) {
             mostrarMensaje("Usuario eliminado correctamente.", false);
-            cargarUsuarios();
+            buscarUsuarios();
             limpiarFormulario();
         } else {
             mostrarMensaje("Error al eliminar el usuario.", true);
@@ -163,7 +208,7 @@ public class UsuariosController {
         txtCorreo.clear();
         txtPassword.clear();
         cbRol.setValue(null);
-        txtNombreEquipo.clear();
+        cbEquipo.setValue(null);
     }
 
     private boolean validarCampos(boolean passwordObligatoria) {
@@ -193,20 +238,28 @@ public class UsuariosController {
         return true;
     }
 
-    private Integer obtenerIdEquipoDesdeTexto() {
-        String nombreEquipo = txtNombreEquipo.getText().trim();
-
-        if (nombreEquipo.isEmpty()) {
+    private Equipo buscarEquipoPorId(Integer idEquipo) {
+        if (idEquipo == null) {
             return null;
         }
 
-        Integer idEquipo = equipoDAO.obtenerIdPorNombre(nombreEquipo);
-
-        if (idEquipo == null) {
-            mostrarMensaje("El equipo '" + nombreEquipo + "' no existe.", true);
+        for (Equipo equipo : listaEquipos) {
+            if (equipo.getIdEquipo() == idEquipo) {
+                return equipo;
+            }
         }
 
-        return idEquipo;
+        return null;
+    }
+
+    private boolean confirmar(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+
+        Optional<ButtonType> resultado = alerta.showAndWait();
+        return resultado.isPresent() && resultado.get() == ButtonType.OK;
     }
 
     private void mostrarMensaje(String mensaje, boolean esError) {

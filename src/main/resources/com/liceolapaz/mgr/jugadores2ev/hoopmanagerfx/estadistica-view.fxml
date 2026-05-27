@@ -1,41 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
-<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.EstadisticaController" style="-fx-padding: 20;">
 
-    <Label text="Gestión de Estadísticas" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15"
+      alignment="CENTER"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.EstadisticaController"
+      style="-fx-padding: 20;">
+
+    <Label text="Gestion de Estadisticas" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="tfBuscador"
+               promptText="Buscar por jugador, rival o valores"
+               prefWidth="360"/>
 
     <TableView fx:id="tablaEstadisticas" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
-            <TableColumn fx:id="colJugador" text="Nombre Jugador" prefWidth="100"/>
-            <TableColumn fx:id="colPartido" text="ID Partido" prefWidth="100"/>
+            <TableColumn fx:id="colJugador" text="Jugador" prefWidth="180"/>
+            <TableColumn fx:id="colPartido" text="Equipo Rival" prefWidth="160"/>
             <TableColumn fx:id="colPuntos" text="Puntos" prefWidth="90"/>
             <TableColumn fx:id="colRebotes" text="Rebotes" prefWidth="90"/>
-            <TableColumn fx:id="colAsistencias" text="Asistencias" prefWidth="90"/>
+            <TableColumn fx:id="colAsistencias" text="Asistencias" prefWidth="110"/>
             <TableColumn fx:id="colFaltas" text="Faltas" prefWidth="90"/>
         </columns>
     </TableView>
 
-    <HBox spacing="10" alignment="CENTER">
-        <TextField fx:id="txtJugador" promptText="Nombre del Jugador" prefWidth="100"/>
-        <TextField fx:id="txtPartido" promptText="ID Partido" prefWidth="100"/>
+    <HBox fx:id="formularioEstadistica" spacing="10" alignment="CENTER">
+        <ComboBox fx:id="cbJugador" promptText="Jugador" prefWidth="220"/>
+        <ComboBox fx:id="cbPartido" promptText="Partido" prefWidth="260"/>
         <TextField fx:id="txtPuntos" promptText="Puntos" prefWidth="90"/>
         <TextField fx:id="txtRebotes" promptText="Rebotes" prefWidth="90"/>
-        <TextField fx:id="txtAsistencias" promptText="Asistencias" prefWidth="90"/>
+        <TextField fx:id="txtAsistencias" promptText="Asistencias" prefWidth="110"/>
         <TextField fx:id="txtFaltas" promptText="Faltas" prefWidth="90"/>
     </HBox>
 
-    <HBox spacing="15" alignment="CENTER">
-        <Button fx:id="btnAnadir" text="Añadir" onAction="#anadirEstadistica" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+    <HBox fx:id="botonesCrud" spacing="15" alignment="CENTER">
+        <Button fx:id="btnAnadir" text="Anadir" onAction="#anadirEstadistica" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
         <Button fx:id="btnModificar" text="Modificar" onAction="#modificarEstadistica" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
         <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminarEstadistica" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
-
         <Button text="Limpiar" onAction="#limpiarCampos"/>
     </HBox>
+
 </VBox>

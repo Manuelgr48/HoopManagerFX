@@ -4,13 +4,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="15.0" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.UsuariosController">
+<VBox spacing="15.0"
+      style="-fx-padding: 20;"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller.UsuariosController">
 
     <Label text="Gestion de Usuarios" textFill="#2c3e50">
         <font>
             <Font name="System Bold" size="24.0" />
         </font>
     </Label>
+
+    <TextField fx:id="tfBuscador"
+               promptText="Buscar por nombre, apellidos, correo, rol o equipo"
+               prefWidth="360" />
 
     <TableView fx:id="tablaUsuarios" VBox.vgrow="ALWAYS">
         <columns>
@@ -43,7 +51,7 @@
         <ComboBox fx:id="cbRol" prefWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
         <Label text="Equipo:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-        <TextField fx:id="txtNombreEquipo" promptText="Nombre del equipo" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+        <ComboBox fx:id="cbEquipo" promptText="Sin asignar" prefWidth="220.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
     </GridPane>
 
     <HBox spacing="10.0" alignment="CENTER_RIGHT">
