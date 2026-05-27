@@ -1,5 +1,6 @@
 package com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller;
 
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.EquipoDAO;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.UsuarioDAO;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Usuario;
 import javafx.collections.FXCollections;
@@ -14,13 +15,14 @@ public class UsuariosController {
     @FXML private TableColumn<Usuario, Integer> colIdUsuario;
     @FXML private TableColumn<Usuario, String> colCorreo;
     @FXML private TableColumn<Usuario, String> colRol;
-    @FXML private TableColumn<Usuario, Integer> colIdEquipo;
+    @FXML private TableColumn<Usuario, String> colNombreEquipo;
 
     @FXML private ComboBox<String> cbRol;
-    @FXML private TextField txtIdEquipo;
+    @FXML private TextField txtNombreEquipo;
     @FXML private Label lblMensaje;
 
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private EquipoDAO equipoDAO = new EquipoDAO();
     private ObservableList<Usuario> listaUsuarios;
 
     @FXML
@@ -30,18 +32,14 @@ public class UsuariosController {
         colIdUsuario.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
         colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
-        colIdEquipo.setCellValueFactory(new PropertyValueFactory<>("idEquipo"));
+        colNombreEquipo.setCellValueFactory(new PropertyValueFactory<>("nombreEquipo"));
 
         cargarUsuarios();
 
         tablaUsuarios.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 cbRol.setValue(newSelection.getRol());
-                if (newSelection.getIdEquipo() != null) {
-                    txtIdEquipo.setText(String.valueOf(newSelection.getIdEquipo()));
-                } else {
-                    txtIdEquipo.setText("");
-                }
+                txtNombreEquipo.setText(newSelection.getNombreEquipo().equals("Sin asignar") ? "" : newSelection.getNombreEquipo());
             }
         });
     }
@@ -62,12 +60,12 @@ public class UsuariosController {
 
         String nuevoRol = cbRol.getValue();
         Integer nuevoIdEquipo = null;
+        String nombreIntroducido = txtNombreEquipo.getText().trim();
 
-        if (!txtIdEquipo.getText().trim().isEmpty()) {
-            try {
-                nuevoIdEquipo = Integer.parseInt(txtIdEquipo.getText().trim());
-            } catch (NumberFormatException e) {
-                mostrarMensaje("El ID de equipo debe ser un número.", true);
+        if (!nombreIntroducido.isEmpty()) {
+            nuevoIdEquipo = equipoDAO.obtenerIdPorNombre(nombreIntroducido);
+            if (nuevoIdEquipo == null) {
+                mostrarMensaje("El equipo '" + nombreIntroducido + "' no existe. Escribe un nombre correcto.", true);
                 return;
             }
         }
@@ -98,7 +96,7 @@ public class UsuariosController {
         if (exito) {
             mostrarMensaje("Usuario eliminado correctamente.", false);
             cargarUsuarios();
-            txtIdEquipo.clear();
+            txtNombreEquipo.clear();
             cbRol.setValue(null);
         } else {
             mostrarMensaje("Error al eliminar el usuario.", true);
@@ -107,6 +105,6 @@ public class UsuariosController {
 
     private void mostrarMensaje(String mensaje, boolean esError) {
         lblMensaje.setText(mensaje);
-        lblMensaje.setStyle(esError ? "-fx-text-fill: red;" : "-fx-text-fill: green;");
+        lblMensaje.setStyle(esError ? "-fx-text-fill: #e74c3c;" : "-fx-text-fill: #2ecc71;");
     }
 }

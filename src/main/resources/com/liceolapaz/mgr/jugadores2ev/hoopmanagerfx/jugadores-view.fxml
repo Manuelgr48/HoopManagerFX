@@ -31,7 +31,7 @@
             <TableColumn fx:id="colDorsal" prefWidth="60.0" text="Dorsal" />
             <TableColumn fx:id="colPosicion" prefWidth="100.0" text="Posición" />
             <TableColumn fx:id="colAltura" prefWidth="80.0" text="Altura (m)" />
-            <TableColumn fx:id="colEquipo" prefWidth="100.0" text="ID Equipo" />
+            <TableColumn fx:id="colEquipo" prefWidth="100.0" text="Equipo" />
         </columns>
         <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

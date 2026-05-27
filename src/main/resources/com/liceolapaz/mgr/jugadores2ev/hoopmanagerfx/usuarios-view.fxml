@@ -20,7 +20,7 @@
             <TableColumn fx:id="colIdUsuario" prefWidth="50.0" text="ID" />
             <TableColumn fx:id="colCorreo" prefWidth="150.0" text="Correo Electrónico" />
             <TableColumn fx:id="colRol" prefWidth="120.0" text="Rol" />
-            <TableColumn fx:id="colIdEquipo" prefWidth="150.0" text="ID Equipo Asignado" />
+            <TableColumn fx:id="colNombreEquipo" prefWidth="150.0" text="Equipo Asignado" />.
         </columns>
         <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -42,8 +42,8 @@
         </VBox>
 
         <VBox spacing="5.0">
-            <Label text="Asignar Equipo (ID):" />
-            <TextField fx:id="txtIdEquipo" promptText="Dejar vacío si no tiene" prefWidth="150.0" />
+            <Label text="Asignar Equipo (Nombre):" />.
+            <TextField fx:id="txtNombreEquipo" promptText="Nombre del equipo" prefWidth="150.0" />.
         </VBox>
 
         <Region HBox.hgrow="ALWAYS" />

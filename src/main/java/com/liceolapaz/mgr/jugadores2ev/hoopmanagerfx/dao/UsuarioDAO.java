@@ -14,18 +14,18 @@ public class UsuarioDAO {
 
     public Usuario autenticarUsuario(String correo, String password) {
         String passwordHasheada = PasswordHasher.hashPassword(password);
-        String sql = "SELECT * FROM usuarios WHERE correo = ? AND password = ?";
+        String sql = "SELECT u.*, e.nombre AS nombre_equipo FROM usuarios u LEFT JOIN equipos e ON u.id_equipo = e.id_equipo WHERE correo = ? AND password = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, correo);
             pstmt.setString(2, passwordHasheada);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    Integer idEquipo = rs.getInt("id_equipo");
-                    if (rs.wasNull()) idEquipo = null;
+                    Integer idEquipo = rs.getObject("id_equipo") != null ? rs.getInt("id_equipo") : null;
+                    String nombreEquipo = rs.getString("nombre_equipo");
                     return new Usuario(
                             rs.getInt("id_usuario"), rs.getString("nombre"), rs.getString("apellidos"),
-                            rs.getString("correo"), rs.getString("password"), rs.getString("rol"), idEquipo
+                            rs.getString("correo"), rs.getString("password"), rs.getString("rol"), idEquipo, nombreEquipo
                     );
                 }
             }
@@ -51,16 +51,16 @@ public class UsuarioDAO {
 
     public List<Usuario> getAllUsuarios() {
         List<Usuario> usuarios = new ArrayList<>();
-        String sql = "SELECT * FROM usuarios";
+        String sql = "SELECT u.*, e.nombre AS nombre_equipo FROM usuarios u LEFT JOIN equipos e ON u.id_equipo = e.id_equipo";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                Integer idEquipo = rs.getInt("id_equipo");
-                if (rs.wasNull()) idEquipo = null;
+                Integer idEquipo = rs.getObject("id_equipo") != null ? rs.getInt("id_equipo") : null;
+                String nombreEquipo = rs.getString("nombre_equipo");
                 usuarios.add(new Usuario(
                         rs.getInt("id_usuario"), rs.getString("nombre"), rs.getString("apellidos"),
-                        rs.getString("correo"), rs.getString("password"), rs.getString("rol"), idEquipo
+                        rs.getString("correo"), rs.getString("password"), rs.getString("rol"), idEquipo, nombreEquipo
                 ));
             }
         } catch (Exception e) { e.printStackTrace(); }

@@ -8,8 +8,9 @@ public class Usuario {
     private String password;
     private String rol;
     private Integer idEquipo;
+    private String nombreEquipo;
 
-    public Usuario(int idUsuario, String nombre, String apellidos, String correo, String password, String rol, Integer idEquipo) {
+    public Usuario(int idUsuario, String nombre, String apellidos, String correo, String password, String rol, Integer idEquipo, String nombreEquipo) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -17,6 +18,7 @@ public class Usuario {
         this.password = password;
         this.rol = rol;
         this.idEquipo = idEquipo;
+        this.nombreEquipo = nombreEquipo;
     }
 
     public int getIdUsuario() { return idUsuario; }
@@ -28,4 +30,8 @@ public class Usuario {
     public void setRol(String rol) { this.rol = rol; }
     public Integer getIdEquipo() { return idEquipo; }
     public void setIdEquipo(Integer idEquipo) { this.idEquipo = idEquipo; }
+
+    public String getNombreEquipo() {
+        return (nombreEquipo != null && !nombreEquipo.isEmpty()) ? nombreEquipo : "Sin asignar";
+    }
 }
