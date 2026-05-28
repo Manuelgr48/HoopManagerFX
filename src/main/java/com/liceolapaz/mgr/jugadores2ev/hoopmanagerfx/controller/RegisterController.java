@@ -1,6 +1,8 @@
 package com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.controller;
 
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.dao.UsuarioDAO;
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.model.Usuario;
+import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,15 +24,16 @@ public class RegisterController {
     @FXML private PasswordField txtConfirmPassword;
     @FXML private Label lblMensaje;
 
-    private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     @FXML
-    public void onRegisterClick() {
+    public void onRegisterClick(ActionEvent event) {
         String nombre = txtNombre.getText().trim();
         String apellidos = txtApellidos.getText().trim();
         String correo = txtCorreo.getText().trim();
         String password = txtPassword.getText();
         String confirmPassword = txtConfirmPassword.getText();
+
         if (nombre.isEmpty() || apellidos.isEmpty() || correo.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             mostrarError("Rellena todos los campos.");
             return;
@@ -42,45 +45,49 @@ public class RegisterController {
         }
 
         if (!correo.contains("@") || !correo.contains(".")) {
-            mostrarError("Introduce un correo electrónico válido.");
+            mostrarError("Introduce un correo electronico valido.");
             return;
         }
 
-
         if (!password.equals(confirmPassword)) {
-            mostrarError("Las contraseñas no coinciden.");
+            mostrarError("Las contrasenas no coinciden.");
             return;
         }
 
         if (password.length() < 6) {
-            mostrarError("La contraseña debe tener mín. 6 caracteres.");
+            mostrarError("La contrasena debe tener minimo 6 caracteres.");
             return;
         }
+
         boolean hasUpper = false;
         boolean hasDigit = false;
+
         for (char c : password.toCharArray()) {
             if (Character.isUpperCase(c)) hasUpper = true;
             if (Character.isDigit(c)) hasDigit = true;
         }
 
         if (!hasUpper || !hasDigit) {
-            mostrarError("La contraseña debe tener al menos una mayúscula y un número.");
+            mostrarError("La contrasena debe tener al menos una mayuscula y un numero.");
             return;
         }
 
         boolean exito = usuarioDAO.registrarUsuario(nombre, apellidos, correo, password, "JUGADOR", null);
 
-        if (exito) {
-            lblMensaje.setStyle("-fx-text-fill: #2ecc71;");
-            lblMensaje.setText("¡Cuenta creada! Ya puedes iniciar sesión.");
-            txtNombre.clear();
-            txtApellidos.clear();
-            txtCorreo.clear();
-            txtPassword.clear();
-            txtConfirmPassword.clear();
-        } else {
-            mostrarError("Error. Es posible que el correo ya esté registrado.");
+        if (!exito) {
+            mostrarError("Error. Es posible que el correo ya este registrado.");
+            return;
         }
+
+        Usuario usuario = usuarioDAO.autenticarUsuario(correo, password);
+
+        if (usuario == null) {
+            mostrarError("Cuenta creada, pero no se pudo iniciar sesion automaticamente.");
+            return;
+        }
+
+        SessionManager.getInstance().iniciarSesion(usuario.getCorreo(), usuario.getRol(), usuario.getIdEquipo());
+        abrirDashboard(event);
     }
 
     private boolean contieneSoloLetras(String texto) {
@@ -89,7 +96,24 @@ public class RegisterController {
                 return false;
             }
         }
+
         return true;
+    }
+
+    private void abrirDashboard(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/dashboard-view.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);
+            stage.setTitle("HoopManagerFX - Panel Principal");
+            stage.setMaximized(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error al abrir el panel principal.");
+        }
     }
 
     private void mostrarError(String mensaje) {
@@ -102,9 +126,11 @@ public class RegisterController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/login-view.fxml"));
             Parent root = loader.load();
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
             stage.setTitle("HoopManagerFX - Login");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
