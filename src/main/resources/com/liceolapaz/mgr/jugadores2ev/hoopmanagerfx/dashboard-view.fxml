@@ -19,6 +19,10 @@
                 <Button text="Inicio"
                         onAction="#mostrarInicio"
                         style="-fx-background-color: white; -fx-text-fill: #111827; -fx-font-weight: bold; -fx-cursor: hand;" />
+
+                <Button text="Cerrar sesion"
+                        onAction="#cerrarSesion"
+                        style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" />
             </HBox>
 
             <HBox fx:id="breadcrumbBar"

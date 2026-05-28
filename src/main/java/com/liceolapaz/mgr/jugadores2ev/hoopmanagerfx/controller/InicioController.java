@@ -5,15 +5,18 @@ import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.SessionManager;
 import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.View;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+
+import java.io.InputStream;
 
 public class InicioController {
 
     @FXML private Label lblBienvenida;
     @FXML private Label lblRol;
     @FXML private VBox cardUsuarios;
+
     @FXML private ImageView imgEquipo;
     @FXML private ImageView imgJugador;
     @FXML private ImageView imgPartido;
@@ -27,10 +30,29 @@ public class InicioController {
     }
 
     private void cargarImagenes() {
-        imgEquipo.setImage(new Image(getClass().getResourceAsStream("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/images/equipo.png")));
-        imgJugador.setImage(new Image(getClass().getResourceAsStream("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/images/jugador-de-baloncesto.png")));
-        imgPartido.setImage(new Image(getClass().getResourceAsStream("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/images/pista-de-baloncesto.png")));
-        imgUsuario.setImage(new Image(getClass().getResourceAsStream("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/images/agregar-usuario.png")));
+        cargarImagen(imgEquipo, "equipo.png");
+        cargarImagen(imgJugador, "jugador-de-baloncesto.png");
+        cargarImagen(imgPartido, "pista-de-baloncesto.png");
+        cargarImagen(imgUsuario, "agregar-usuario.png");
+    }
+
+    private void cargarImagen(ImageView imageView, String nombreArchivo) {
+        String[] rutas = {
+                "/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/images/" + nombreArchivo,
+                "/com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx/images/" + nombreArchivo,
+                "/images/" + nombreArchivo
+        };
+
+        for (String ruta : rutas) {
+            InputStream stream = getClass().getResourceAsStream(ruta);
+
+            if (stream != null) {
+                imageView.setImage(new Image(stream));
+                return;
+            }
+        }
+
+        System.err.println("No se encontro la imagen: " + nombreArchivo);
     }
 
     private void cargarBienvenida() {
