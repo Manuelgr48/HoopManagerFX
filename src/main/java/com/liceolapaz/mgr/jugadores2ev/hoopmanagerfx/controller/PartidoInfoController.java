@@ -14,61 +14,50 @@ public class PartidoInfoController {
 
     @FXML private Label lblTitulo;
     @FXML private Label lblResultado;
+    @FXML private Label lblEquipo;
 
-    @FXML private TableView<Estadistica> tablaPropios;
-    @FXML private TableColumn<Estadistica, String> colJugadorPropio;
-    @FXML private TableColumn<Estadistica, Integer> colPuntosPropio;
-    @FXML private TableColumn<Estadistica, Integer> colRebotesPropio;
-    @FXML private TableColumn<Estadistica, Integer> colAsistenciasPropio;
-    @FXML private TableColumn<Estadistica, Integer> colFaltasPropio;
-
-    @FXML private TableView<Estadistica> tablaRivales;
-    @FXML private TableColumn<Estadistica, String> colJugadorRival;
-    @FXML private TableColumn<Estadistica, Integer> colPuntosRival;
-    @FXML private TableColumn<Estadistica, Integer> colRebotesRival;
-    @FXML private TableColumn<Estadistica, Integer> colAsistenciasRival;
-    @FXML private TableColumn<Estadistica, Integer> colFaltasRival;
+    @FXML private TableView<Estadistica> tablaEstadisticas;
+    @FXML private TableColumn<Estadistica, String> colJugador;
+    @FXML private TableColumn<Estadistica, Integer> colPuntos;
+    @FXML private TableColumn<Estadistica, Integer> colRebotes;
+    @FXML private TableColumn<Estadistica, Integer> colAsistencias;
+    @FXML private TableColumn<Estadistica, Integer> colFaltas;
 
     private final EstadisticaDAO estadisticaDAO = new EstadisticaDAOImpl();
-    private final ObservableList<Estadistica> propios = FXCollections.observableArrayList();
-    private final ObservableList<Estadistica> rivales = FXCollections.observableArrayList();
+    private final ObservableList<Estadistica> estadisticas = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        configurarColumnas(colJugadorPropio, colPuntosPropio, colRebotesPropio, colAsistenciasPropio, colFaltasPropio);
-        configurarColumnas(colJugadorRival, colPuntosRival, colRebotesRival, colAsistenciasRival, colFaltasRival);
+        colJugador.setCellValueFactory(new PropertyValueFactory<>("nombreJugador"));
+        colPuntos.setCellValueFactory(new PropertyValueFactory<>("puntos"));
+        colRebotes.setCellValueFactory(new PropertyValueFactory<>("rebotes"));
+        colAsistencias.setCellValueFactory(new PropertyValueFactory<>("asistencias"));
+        colFaltas.setCellValueFactory(new PropertyValueFactory<>("faltasCometidas"));
 
-        tablaPropios.setItems(propios);
-        tablaRivales.setItems(rivales);
+        tablaEstadisticas.setItems(estadisticas);
     }
 
     public void configurar(Partido partido) {
         lblTitulo.setText(partido.getNombreEquipo() + " vs " + partido.getEquipoRival() + " - " + partido.getFecha());
         lblResultado.setText(partido.getResultadoPropio() + " - " + partido.getResultadoRival());
+        lblEquipo.setText("Estadisticas de " + partido.getNombreEquipo());
 
-        propios.clear();
-        rivales.clear();
+        estadisticas.clear();
+
+        if (partido.getIdEquipo() == null) {
+            tablaEstadisticas.setPlaceholder(new Label("Este partido no tiene equipo asignado. Editalo y selecciona el equipo local."));
+            return;
+        }
 
         for (Estadistica estadistica : estadisticaDAO.obtenerPorPartido(partido.getIdPartido())) {
             if (estadistica.getIdEquipoJugador() != null
-                    && partido.getIdEquipo() != null
                     && estadistica.getIdEquipoJugador().equals(partido.getIdEquipo())) {
-                propios.add(estadistica);
-            } else {
-                rivales.add(estadistica);
+                estadisticas.add(estadistica);
             }
         }
-    }
 
-    private void configurarColumnas(TableColumn<Estadistica, String> jugador,
-                                    TableColumn<Estadistica, Integer> puntos,
-                                    TableColumn<Estadistica, Integer> rebotes,
-                                    TableColumn<Estadistica, Integer> asistencias,
-                                    TableColumn<Estadistica, Integer> faltas) {
-        jugador.setCellValueFactory(new PropertyValueFactory<>("nombreJugador"));
-        puntos.setCellValueFactory(new PropertyValueFactory<>("puntos"));
-        rebotes.setCellValueFactory(new PropertyValueFactory<>("rebotes"));
-        asistencias.setCellValueFactory(new PropertyValueFactory<>("asistencias"));
-        faltas.setCellValueFactory(new PropertyValueFactory<>("faltasCometidas"));
+        if (estadisticas.isEmpty()) {
+            tablaEstadisticas.setPlaceholder(new Label("No hay estadisticas registradas para jugadores de este equipo en este partido."));
+        }
     }
 }
