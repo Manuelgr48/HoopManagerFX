@@ -6,7 +6,6 @@ import com.liceolapaz.mgr.jugadores2ev.hoopmanagerfx.util.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,14 +15,18 @@ public class EstadisticaDAOImpl implements EstadisticaDAO {
     public List<Estadistica> obtenerTodas() {
         List<Estadistica> estadisticas = new ArrayList<>();
 
-        String sql = "SELECT e.*, CONCAT(j.nombre, ' ', j.apellidos) AS nombre_completo, p.equipo_rival " +
+        String sql = "SELECT e.*, CONCAT(j.nombre, ' ', j.apellidos) AS nombre_completo, " +
+                "j.id_equipo AS id_equipo_jugador, eq.nombre AS nombre_equipo_jugador, " +
+                "p.equipo_rival, DATE(p.fecha) AS fecha_partido " +
                 "FROM estadisticas e " +
                 "LEFT JOIN jugadores j ON e.id_jugador = j.id_jugador " +
-                "LEFT JOIN partidos p ON e.id_partido = p.id_partido";
+                "LEFT JOIN equipos eq ON j.id_equipo = eq.id_equipo " +
+                "LEFT JOIN partidos p ON e.id_partido = p.id_partido " +
+                "ORDER BY p.fecha DESC, nombre_completo";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 estadisticas.add(mapearEstadistica(rs));
@@ -40,16 +43,52 @@ public class EstadisticaDAOImpl implements EstadisticaDAO {
     public List<Estadistica> obtenerPorJugador(int idJugador) {
         List<Estadistica> estadisticas = new ArrayList<>();
 
-        String sql = "SELECT e.*, CONCAT(j.nombre, ' ', j.apellidos) AS nombre_completo, p.equipo_rival " +
+        String sql = "SELECT e.*, CONCAT(j.nombre, ' ', j.apellidos) AS nombre_completo, " +
+                "j.id_equipo AS id_equipo_jugador, eq.nombre AS nombre_equipo_jugador, " +
+                "p.equipo_rival, DATE(p.fecha) AS fecha_partido " +
                 "FROM estadisticas e " +
                 "LEFT JOIN jugadores j ON e.id_jugador = j.id_jugador " +
+                "LEFT JOIN equipos eq ON j.id_equipo = eq.id_equipo " +
                 "LEFT JOIN partidos p ON e.id_partido = p.id_partido " +
-                "WHERE e.id_jugador = ?";
+                "WHERE e.id_jugador = ? " +
+                "ORDER BY p.fecha DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, idJugador);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    estadisticas.add(mapearEstadistica(rs));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return estadisticas;
+    }
+
+    @Override
+    public List<Estadistica> obtenerPorPartido(int idPartido) {
+        List<Estadistica> estadisticas = new ArrayList<>();
+
+        String sql = "SELECT e.*, CONCAT(j.nombre, ' ', j.apellidos) AS nombre_completo, " +
+                "j.id_equipo AS id_equipo_jugador, eq.nombre AS nombre_equipo_jugador, " +
+                "p.equipo_rival, DATE(p.fecha) AS fecha_partido " +
+                "FROM estadisticas e " +
+                "LEFT JOIN jugadores j ON e.id_jugador = j.id_jugador " +
+                "LEFT JOIN equipos eq ON j.id_equipo = eq.id_equipo " +
+                "LEFT JOIN partidos p ON e.id_partido = p.id_partido " +
+                "WHERE e.id_partido = ? " +
+                "ORDER BY eq.nombre, nombre_completo";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idPartido);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -131,12 +170,17 @@ public class EstadisticaDAOImpl implements EstadisticaDAO {
             nombreJugador = "Jugador desconocido";
         }
 
+        java.sql.Date fechaSql = rs.getDate("fecha_partido");
+
         return new Estadistica(
                 rs.getInt("id_estadistica"),
                 rs.getInt("id_jugador"),
                 nombreJugador,
+                rs.getObject("id_equipo_jugador") != null ? rs.getInt("id_equipo_jugador") : null,
+                rs.getString("nombre_equipo_jugador"),
                 rs.getInt("id_partido"),
                 rs.getString("equipo_rival"),
+                fechaSql != null ? fechaSql.toLocalDate() : null,
                 rs.getInt("puntos"),
                 rs.getInt("rebotes"),
                 rs.getInt("asistencias"),

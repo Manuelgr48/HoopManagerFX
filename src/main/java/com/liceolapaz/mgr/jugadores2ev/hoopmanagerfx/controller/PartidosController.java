@@ -9,10 +9,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -40,6 +44,7 @@ public class PartidosController implements Initializable {
 
     @FXML private HBox formularioPartido;
     @FXML private HBox botonesCrud;
+    @FXML private Button btnVerInformacion;
 
     private final EquipoDAO equipoDAO = new EquipoDAO();
     private final PartidoService partidoService = new PartidoService();
@@ -55,12 +60,17 @@ public class PartidosController implements Initializable {
         colResPropio.setCellValueFactory(new PropertyValueFactory<>("resultadoPropio"));
         colResRival.setCellValueFactory(new PropertyValueFactory<>("resultadoRival"));
 
+        configurarColoresTabla();
+
         tablaPartidos.setItems(listaPartidos);
         cbEquipo.setItems(listaEquipos);
+        btnVerInformacion.setDisable(true);
 
         tfBuscador.textProperty().addListener((obs, oldText, newText) -> buscarPartidos());
 
         tablaPartidos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, partido) -> {
+            btnVerInformacion.setDisable(partido == null);
+
             if (partido != null) {
                 rellenarFormulario(partido);
             }
@@ -69,7 +79,44 @@ public class PartidosController implements Initializable {
         configurarPermisos();
         cargarEquiposCombo();
         cargarPartidos();
-        configurarColoresTabla();
+    }
+
+    private void configurarColoresTabla() {
+        colEquipo.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null : item);
+                setStyle(empty ? "" : "-fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8; -fx-font-weight: bold;");
+            }
+        });
+
+        colResPropio.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : String.valueOf(item));
+                setStyle(empty ? "" : "-fx-background-color: #eff6ff; -fx-text-fill: #1d4ed8; -fx-font-weight: bold;");
+            }
+        });
+
+        colRival.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null : item);
+                setStyle(empty ? "" : "-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; -fx-font-weight: bold;");
+            }
+        });
+
+        colResRival.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : String.valueOf(item));
+                setStyle(empty ? "" : "-fx-background-color: #fef2f2; -fx-text-fill: #b91c1c; -fx-font-weight: bold;");
+            }
+        });
     }
 
     private void configurarPermisos() {
@@ -124,10 +171,36 @@ public class PartidosController implements Initializable {
     }
 
     @FXML
-    private void handleAnadir() {
-        if (!validarFormulario()) {
+    private void verInformacionPartido() {
+        Partido partido = tablaPartidos.getSelectionModel().getSelectedItem();
+
+        if (partido == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Aviso", "Selecciona un partido.");
             return;
         }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/partido-info-view.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            PartidoInfoController controller = loader.getController();
+            controller.configurar(partido);
+
+            Stage stage = new Stage();
+            stage.setTitle("Informacion del partido");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo abrir la informacion del partido.");
+        }
+    }
+
+    @FXML
+    private void handleAnadir() {
+        if (!validarFormulario()) return;
 
         Partido partido = crearPartidoDesdeFormulario();
 
@@ -162,13 +235,9 @@ public class PartidosController implements Initializable {
             return;
         }
 
-        if (!validarFormulario()) {
-            return;
-        }
+        if (!validarFormulario()) return;
 
-        if (!confirmar("Confirmar modificacion", "Seguro que quieres modificar este partido?")) {
-            return;
-        }
+        if (!confirmar("Confirmar modificacion", "Seguro que quieres modificar este partido?")) return;
 
         Partido partido = crearPartidoDesdeFormulario();
         partido.setIdPartido(seleccionado.getIdPartido());
@@ -204,9 +273,7 @@ public class PartidosController implements Initializable {
             return;
         }
 
-        if (!confirmar("Confirmar eliminacion", "Seguro que quieres eliminar este partido?")) {
-            return;
-        }
+        if (!confirmar("Confirmar eliminacion", "Seguro que quieres eliminar este partido?")) return;
 
         Task<Void> task = new Task<>() {
             @Override
@@ -253,9 +320,7 @@ public class PartidosController implements Initializable {
     }
 
     private Equipo buscarEquipoPorId(Integer idEquipo) {
-        if (idEquipo == null) {
-            return null;
-        }
+        if (idEquipo == null) return null;
 
         for (Equipo equipo : listaEquipos) {
             if (equipo.getIdEquipo() == idEquipo) {
@@ -275,6 +340,7 @@ public class PartidosController implements Initializable {
         tfUbicacion.clear();
         tfResPropio.clear();
         tfResRival.clear();
+        btnVerInformacion.setDisable(true);
     }
 
     private boolean validarFormulario() {
@@ -320,42 +386,5 @@ public class PartidosController implements Initializable {
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
-    }
-    private void configurarColoresTabla() {
-        colEquipo.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null : item);
-                setStyle(empty ? "" : "-fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8; -fx-font-weight: bold;");
-            }
-        });
-
-        colResPropio.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : String.valueOf(item));
-                setStyle(empty ? "" : "-fx-background-color: #eff6ff; -fx-text-fill: #1d4ed8; -fx-font-weight: bold;");
-            }
-        });
-
-        colRival.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null : item);
-                setStyle(empty ? "" : "-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; -fx-font-weight: bold;");
-            }
-        });
-
-        colResRival.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : String.valueOf(item));
-                setStyle(empty ? "" : "-fx-background-color: #fef2f2; -fx-text-fill: #b91c1c; -fx-font-weight: bold;");
-            }
-        });
     }
 }

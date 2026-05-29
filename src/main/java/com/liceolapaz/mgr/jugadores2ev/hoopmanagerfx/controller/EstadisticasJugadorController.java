@@ -14,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public class EstadisticasJugadorController {
@@ -22,6 +23,7 @@ public class EstadisticasJugadorController {
 
     @FXML private TableView<Estadistica> tablaEstadisticas;
     @FXML private TableColumn<Estadistica, String> colRival;
+    @FXML private TableColumn<Estadistica, LocalDate> colFecha;
     @FXML private TableColumn<Estadistica, Integer> colPuntos;
     @FXML private TableColumn<Estadistica, Integer> colRebotes;
     @FXML private TableColumn<Estadistica, Integer> colAsistencias;
@@ -48,6 +50,7 @@ public class EstadisticasJugadorController {
     @FXML
     public void initialize() {
         colRival.setCellValueFactory(new PropertyValueFactory<>("equipoRival"));
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaPartido"));
         colPuntos.setCellValueFactory(new PropertyValueFactory<>("puntos"));
         colRebotes.setCellValueFactory(new PropertyValueFactory<>("rebotes"));
         colAsistencias.setCellValueFactory(new PropertyValueFactory<>("asistencias"));

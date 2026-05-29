@@ -13,18 +13,19 @@
            text="Estadisticas del jugador"
            style="-fx-font-size: 22px; -fx-font-weight: bold;" />
 
-    <TableView fx:id="tablaEstadisticas" prefWidth="760" prefHeight="300">
+    <TableView fx:id="tablaEstadisticas" prefWidth="800" prefHeight="300">
         <columns>
-            <TableColumn fx:id="colRival" text="Equipo Rival" prefWidth="220"/>
-            <TableColumn fx:id="colPuntos" text="Puntos" prefWidth="110"/>
-            <TableColumn fx:id="colRebotes" text="Rebotes" prefWidth="110"/>
-            <TableColumn fx:id="colAsistencias" text="Asistencias" prefWidth="130"/>
-            <TableColumn fx:id="colFaltas" text="Faltas" prefWidth="110"/>
+            <TableColumn fx:id="colRival" text="Equipo Rival" prefWidth="180"/>
+            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="120"/>
+            <TableColumn fx:id="colPuntos" text="Puntos" prefWidth="100"/>
+            <TableColumn fx:id="colRebotes" text="Rebotes" prefWidth="100"/>
+            <TableColumn fx:id="colAsistencias" text="Asistencias" prefWidth="120"/>
+            <TableColumn fx:id="colFaltas" text="Faltas" prefWidth="100"/>
         </columns>
     </TableView>
 
     <HBox fx:id="formularioEstadistica" spacing="10">
-        <ComboBox fx:id="cbPartido" promptText="Partido / rival" prefWidth="210"/>
+        <ComboBox fx:id="cbPartido" promptText="Partido / rival" prefWidth="220"/>
         <TextField fx:id="txtPuntos" promptText="Puntos" prefWidth="90"/>
         <TextField fx:id="txtRebotes" promptText="Rebotes" prefWidth="90"/>
         <TextField fx:id="txtAsistencias" promptText="Asistencias" prefWidth="110"/>

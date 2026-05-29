@@ -27,6 +27,11 @@
         </columns>
     </TableView>
 
+    <Button fx:id="btnVerInformacion"
+            text="Ver informacion de partido"
+            onAction="#verInformacionPartido"
+            style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold;"/>
+
     <HBox fx:id="formularioPartido" spacing="10" alignment="CENTER">
         <ComboBox fx:id="cbEquipo" promptText="Equipo" prefWidth="180"/>
         <DatePicker fx:id="dpFecha" promptText="Fecha del partido"/>
