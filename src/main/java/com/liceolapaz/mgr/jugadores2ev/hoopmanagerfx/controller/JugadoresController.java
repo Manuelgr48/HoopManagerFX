@@ -97,24 +97,9 @@ public class JugadoresController implements Initializable {
             return;
         }
 
-        if (sesion.esEntrenador()) {
-            if (sesion.getIdEquipo() == null) {
-                lblTitulo.setText("Entrenador sin equipo asignado");
-                mostrarCrud(false);
-                idEquipoForzado = -1;
-                return;
-            }
-
-            lblTitulo.setText("Mi equipo");
-            mostrarCrud(true);
-            cbEquipo.setDisable(true);
-            idEquipoForzado = sesion.getIdEquipo();
-            cbEquipo.setValue(buscarEquipoPorId(idEquipoForzado));
-            return;
-        }
-
         lblTitulo.setText("Jugadores");
         mostrarCrud(false);
+        cbEquipo.setDisable(true);
         idEquipoForzado = null;
     }
 
@@ -205,7 +190,7 @@ public class JugadoresController implements Initializable {
         }
 
         if (!puedeGestionarJugador(seleccionado)) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Permiso denegado", "No puedes modificar jugadores de otro equipo.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Permiso denegado", "No puedes modificar este jugador.");
             return;
         }
 
@@ -250,7 +235,7 @@ public class JugadoresController implements Initializable {
         }
 
         if (!puedeGestionarJugador(seleccionado)) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Permiso denegado", "No puedes eliminar jugadores de otro equipo.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Permiso denegado", "No puedes eliminar este jugador.");
             return;
         }
 
@@ -285,16 +270,7 @@ public class JugadoresController implements Initializable {
     }
 
     private boolean puedeGestionarJugador(Jugador jugador) {
-        SessionManager sesion = SessionManager.getInstance();
-
-        if (sesion.esAdmin()) {
-            return true;
-        }
-
-        return sesion.esEntrenador()
-                && sesion.getIdEquipo() != null
-                && jugador.getIdEquipo() != null
-                && sesion.getIdEquipo().equals(jugador.getIdEquipo());
+        return SessionManager.getInstance().esAdmin();
     }
 
     private Integer obtenerIdEquipoParaGuardar() {
