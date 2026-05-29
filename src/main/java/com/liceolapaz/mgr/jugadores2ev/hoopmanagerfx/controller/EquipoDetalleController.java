@@ -134,6 +134,9 @@ public class EquipoDetalleController implements Initializable {
         colPosicion.setCellValueFactory(new PropertyValueFactory<>("posicion"));
         colAltura.setCellValueFactory(new PropertyValueFactory<>("altura"));
 
+        boolean mostrarIds = SessionManager.getInstance().esAdmin();
+        colId.setVisible(mostrarIds);
+
         tablaJugadores.setItems(listaJugadores);
 
         tablaJugadores.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, jugador) -> {
@@ -307,6 +310,11 @@ public class EquipoDetalleController implements Initializable {
             stage.setTitle("Estadisticas de " + jugador.getNombre() + " " + jugador.getApellidos());
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
+            try {
+                stage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/images/favicon_basketball.png")));
+            } catch (Exception e) {
+                System.out.println("No se pudo cargar el favicon de la ventana de estadisticas.");
+            }
             stage.showAndWait();
 
         } catch (Exception e) {

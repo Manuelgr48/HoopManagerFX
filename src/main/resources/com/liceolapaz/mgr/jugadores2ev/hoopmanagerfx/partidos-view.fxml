@@ -18,12 +18,12 @@
 
     <TableView fx:id="tablaPartidos" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="colEquipo" text="Equipo" prefWidth="160"/>
+            <TableColumn fx:id="colEquipo" text="Nuestro Equipo" prefWidth="160"/>
             <TableColumn fx:id="colFecha" text="Fecha" prefWidth="120"/>
             <TableColumn fx:id="colRival" text="Equipo Rival" prefWidth="150"/>
             <TableColumn fx:id="colUbicacion" text="Ubicacion" prefWidth="150"/>
-            <TableColumn fx:id="colResPropio" text="Res. Propio" prefWidth="100"/>
-            <TableColumn fx:id="colResRival" text="Res. Rival" prefWidth="100"/>
+            <TableColumn fx:id="colResPropio" text="Pts Nuestro" prefWidth="110"/>
+            <TableColumn fx:id="colResRival" text="Pts Rival" prefWidth="100"/>
         </columns>
     </TableView>
 

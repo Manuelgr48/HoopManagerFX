@@ -64,6 +64,9 @@ public class JugadoresController implements Initializable {
         colAltura.setCellValueFactory(new PropertyValueFactory<>("altura"));
         colEquipo.setCellValueFactory(new PropertyValueFactory<>("nombreEquipo"));
 
+        boolean mostrarIds = SessionManager.getInstance().esAdmin();
+        colId.setVisible(mostrarIds);
+
         cbEquipo.setItems(listaEquipos);
 
         cargarEquipos();

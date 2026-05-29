@@ -69,6 +69,7 @@ public class PartidosController implements Initializable {
         configurarPermisos();
         cargarEquiposCombo();
         cargarPartidos();
+        configurarColoresTabla();
     }
 
     private void configurarPermisos() {
@@ -319,5 +320,42 @@ public class PartidosController implements Initializable {
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
+    }
+    private void configurarColoresTabla() {
+        colEquipo.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null : item);
+                setStyle(empty ? "" : "-fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8; -fx-font-weight: bold;");
+            }
+        });
+
+        colResPropio.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : String.valueOf(item));
+                setStyle(empty ? "" : "-fx-background-color: #eff6ff; -fx-text-fill: #1d4ed8; -fx-font-weight: bold;");
+            }
+        });
+
+        colRival.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null : item);
+                setStyle(empty ? "" : "-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; -fx-font-weight: bold;");
+            }
+        });
+
+        colResRival.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : String.valueOf(item));
+                setStyle(empty ? "" : "-fx-background-color: #fef2f2; -fx-text-fill: #b91c1c; -fx-font-weight: bold;");
+            }
+        });
     }
 }

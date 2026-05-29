@@ -51,6 +51,9 @@ public class EquiposController implements Initializable {
         colPresupuesto.setCellValueFactory(new PropertyValueFactory<>("presupuesto"));
         colFechaCreacion.setCellValueFactory(new PropertyValueFactory<>("fechaCreacion"));
 
+        boolean mostrarIds = SessionManager.getInstance().esAdmin();
+        colId.setVisible(mostrarIds);
+
         tablaEquipos.setItems(listaEquipos);
         btnAccederInformacion.setDisable(true);
 
