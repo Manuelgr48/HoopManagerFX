@@ -55,6 +55,7 @@ El sistema dispone de distintos perfiles de usuario:
 
 ## Estructura del proyecto
 
+````md
 ```text
 HoopManagerFX
 ├── src
@@ -74,6 +75,8 @@ HoopManagerFX
 ├── hoopmanager_db.sql
 ├── pom.xml
 └── README.md
+```
+````
 
 Requisitos previos
 Para ejecutar el proyecto es necesario tener instalado:
