@@ -10,11 +10,15 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.Optional;
@@ -44,6 +48,7 @@ public class JugadoresController implements Initializable {
 
     @FXML private GridPane formularioJugador;
     @FXML private HBox botonesCrud;
+    @FXML private Button btnVerInformacion;
 
     private final JugadorDAO jugadorDAO = new JugadorDAO();
     private final EquipoDAO equipoDAO = new EquipoDAO();
@@ -68,6 +73,7 @@ public class JugadoresController implements Initializable {
         colId.setVisible(mostrarIds);
 
         cbEquipo.setItems(listaEquipos);
+        btnVerInformacion.setDisable(true);
 
         cargarEquipos();
         configurarPermisos();
@@ -75,6 +81,8 @@ public class JugadoresController implements Initializable {
         cargarJugadores();
 
         tablaJugadores.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, jugador) -> {
+            btnVerInformacion.setDisable(jugador == null);
+
             if (jugador != null) {
                 rellenarFormulario(jugador);
             }
@@ -149,6 +157,34 @@ public class JugadoresController implements Initializable {
         txtPosicion.setText(jugador.getPosicion());
         txtAltura.setText(String.valueOf(jugador.getAltura()));
         cbEquipo.setValue(buscarEquipoPorId(jugador.getIdEquipo()));
+    }
+
+    @FXML
+    private void verInformacionJugador() {
+        Jugador jugador = tablaJugadores.getSelectionModel().getSelectedItem();
+
+        if (jugador == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Aviso", "Selecciona un jugador.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/liceolapaz/mgr/jugadores2ev/hoopmanagerfx/estadisticas-jugador-view.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            EstadisticasJugadorController controller = loader.getController();
+            controller.configurar(jugador, SessionManager.getInstance().esAdmin());
+
+            Stage stage = new Stage();
+            stage.setTitle("Estadisticas de " + jugador.getNombre() + " " + jugador.getApellidos());
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo abrir la informacion del jugador.");
+        }
     }
 
     @FXML
@@ -261,6 +297,7 @@ public class JugadoresController implements Initializable {
         txtDorsal.clear();
         txtPosicion.clear();
         txtAltura.clear();
+        btnVerInformacion.setDisable(true);
 
         if (idEquipoForzado == null) {
             cbEquipo.setValue(null);
