@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -179,11 +180,24 @@ public class JugadoresController implements Initializable {
             stage.setTitle("Estadisticas de " + jugador.getNombre() + " " + jugador.getApellidos());
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
+            cargarFavicon(stage);
             stage.showAndWait();
 
         } catch (Exception e) {
             e.printStackTrace();
             mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo abrir la informacion del jugador.");
+        }
+    }
+
+    private void cargarFavicon(Stage stage) {
+        try {
+            URL iconUrl = getClass().getResource("/images/favicon_basketball.png");
+
+            if (iconUrl != null) {
+                stage.getIcons().add(new Image(iconUrl.toExternalForm()));
+            }
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar el favicon de la ventana de estadisticas.");
         }
     }
 

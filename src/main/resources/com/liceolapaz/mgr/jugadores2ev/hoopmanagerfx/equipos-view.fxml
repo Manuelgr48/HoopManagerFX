@@ -12,10 +12,10 @@
 
     <Label text="Gestion de Equipos" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <TextField fx:id="tfBuscador" promptText="Buscar por nombre o categoria" prefWidth="320"/>
-        <Button text="Limpiar" onAction="#limpiarFormulario"/>
-    </HBox>
+    <TextField fx:id="tfBuscador"
+               promptText="Buscar por nombre o categoria"
+               maxWidth="Infinity"
+               style="-fx-font-size: 14px; -fx-padding: 8px;" />
 
     <TableView fx:id="tablaEquipos" VBox.vgrow="ALWAYS">
         <columns>
