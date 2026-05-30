@@ -55,6 +55,7 @@ El sistema dispone de distintos perfiles de usuario:
 
 ## Estructura del proyecto
 
+```text
 HoopManagerFX
 ├── src
 │   └── main
