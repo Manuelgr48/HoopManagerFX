@@ -167,6 +167,10 @@ Antes de desplegar o presentar la aplicación, se sugiere realizar el siguiente 
 
 ---
 
+Enlace para el vídeo demostración de la app: https://drive.google.com/drive/folders/1nRqGTTRUgtw5hkU9KEJ41ZQO8OkaMDTS?usp=sharing
+
+---
+
 ## Licencia
 
 Proyecto desarrollado estrictamente con finalidad académica.
