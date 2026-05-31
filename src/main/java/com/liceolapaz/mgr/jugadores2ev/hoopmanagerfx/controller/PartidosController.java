@@ -17,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -190,8 +191,8 @@ public class PartidosController implements Initializable {
             stage.setTitle("Informacion del partido");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
+            cargarFavicon(stage);
             stage.showAndWait();
-
         } catch (Exception e) {
             e.printStackTrace();
             mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo abrir la informacion del partido.");
@@ -378,6 +379,17 @@ public class PartidosController implements Initializable {
 
         Optional<ButtonType> resultado = alerta.showAndWait();
         return resultado.isPresent() && resultado.get() == ButtonType.OK;
+    }
+    private void cargarFavicon(Stage stage) {
+        try {
+            URL iconUrl = getClass().getResource("/images/favicon_basketball.png");
+
+            if (iconUrl != null) {
+                stage.getIcons().add(new Image(iconUrl.toExternalForm()));
+            }
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar el favicon de la ventana de informacion del partido.");
+        }
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
